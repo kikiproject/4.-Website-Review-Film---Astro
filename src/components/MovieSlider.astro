@@ -1,0 +1,130 @@
+---
+import MovieCard from './MovieCard.astro';
+
+interface Movie {
+  id: number;
+  title: string;
+  posterPath: string | null;
+  releaseDate?: string;
+  voteAverage: number;
+  genreIds?: number[];
+}
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  movies: Movie[];
+  viewAllLink?: string;
+  viewAllText?: string;
+  cardSize?: 'small' | 'medium' | 'large';
+  showRating?: boolean;
+}
+
+const { 
+  title, 
+  subtitle, 
+  movies, 
+  viewAllLink, 
+  viewAllText = 'Lihat Semua',
+  cardSize = 'medium',
+  showRating = true
+} = Astro.props;
+---
+
+<section class="section py-8 md:py-12">
+  <div class="container-custom">
+    <!-- Section Header -->
+    <div class="flex items-end justify-between mb-6">
+      <div>
+        <h2 class="section-title">{title}</h2>
+        {subtitle && <p class="section-subtitle">{subtitle}</p>}
+      </div>
+      {viewAllLink && (
+        <a 
+          href={viewAllLink}
+          class="hidden sm:flex items-center gap-2 text-primary-400 hover:text-primary-300 font-medium transition-colors"
+        >
+          {viewAllText}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+      )}
+    </div>
+
+    <!-- Horizontal Scroll Container -->
+    <div class="relative group">
+      <!-- Left Arrow -->
+      <button 
+        class="scroll-arrow left hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 items-center justify-center bg-dark-300 border border-dark-100 rounded-full text-white opacity-0 group-hover:opacity-100 hover:bg-primary-500 transition-all duration-300 shadow-card"
+        aria-label="Scroll ke kiri"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
+
+      <!-- Movies Container -->
+      <div class="movies-scroll flex gap-4 overflow-x-auto hide-scrollbar pb-4 snap-x snap-mandatory">
+        {movies.map((movie) => (
+          <div class="snap-start flex-shrink-0">
+            <MovieCard 
+              id={movie.id}
+              title={movie.title}
+              posterPath={movie.posterPath}
+              releaseDate={movie.releaseDate}
+              voteAverage={movie.voteAverage}
+              genreIds={movie.genreIds}
+              size={cardSize}
+              showRating={showRating}
+            />
+          </div>
+        ))}
+      </div>
+
+      <!-- Right Arrow -->
+      <button 
+        class="scroll-arrow right hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 items-center justify-center bg-dark-300 border border-dark-100 rounded-full text-white opacity-0 group-hover:opacity-100 hover:bg-primary-500 transition-all duration-300 shadow-card"
+        aria-label="Scroll ke kanan"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile View All -->
+    {viewAllLink && (
+      <div class="sm:hidden mt-4 text-center">
+        <a 
+          href={viewAllLink}
+          class="inline-flex items-center gap-2 text-primary-400 hover:text-primary-300 font-medium transition-colors"
+        >
+          {viewAllText}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    )}
+  </div>
+</section>
+
+<script>
+  // Scroll functionality
+  document.querySelectorAll('.movies-scroll').forEach((container) => {
+    const parent = container.parentElement;
+    const leftBtn = parent?.querySelector('.scroll-arrow.left');
+    const rightBtn = parent?.querySelector('.scroll-arrow.right');
+    
+    const scrollAmount = 400;
+
+    leftBtn?.addEventListener('click', () => {
+      container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    });
+
+    rightBtn?.addEventListener('click', () => {
+      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
+  });
+</script>

@@ -1,0 +1,269 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import MovieCard from '../components/MovieCard.astro';
+
+const trendingMovies = [
+  { id: 701, title: "Dune: Part Two", posterPath: "/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg", releaseDate: "2024-02-28", voteAverage: 8.4, trend: "+15" },
+  { id: 702, title: "Godzilla x Kong: The New Empire", posterPath: "/z1p34vh7dEOnLDmyCrlUVLuoDzd.jpg", releaseDate: "2024-03-27", voteAverage: 7.2, trend: "+12" },
+  { id: 703, title: "Kung Fu Panda 4", posterPath: "/kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg", releaseDate: "2024-03-08", voteAverage: 7.1, trend: "+8" },
+  { id: 704, title: "Oppenheimer", posterPath: "/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg", releaseDate: "2023-07-19", voteAverage: 8.1, trend: "+5" },
+  { id: 705, title: "Poor Things", posterPath: "/kCGlIMHnOm8JPXq3rXM6c5wMxcT.jpg", releaseDate: "2023-12-08", voteAverage: 7.9, trend: "+3" },
+  { id: 706, title: "The Zone of Interest", posterPath: "/hUu9zyZmDd8VZegKi1iK1Vk0RYS.jpg", releaseDate: "2023-12-15", voteAverage: 7.4, trend: "+2" },
+  { id: 707, title: "Immaculate", posterPath: "/fdZpvODTX5wwkD0ikZNaClE4AoW.jpg", releaseDate: "2024-03-22", voteAverage: 6.2, trend: "+18" },
+  { id: 708, title: "Ghostbusters: Frozen Empire", posterPath: "/e1J2oNzSBdou01sUvriVedr8C8i.jpg", releaseDate: "2024-03-22", voteAverage: 6.7, trend: "+10" },
+  { id: 709, title: "Bob Marley: One Love", posterPath: "/mKWalirPreEdCKxLWPsLLgq5rYN.jpg", releaseDate: "2024-02-14", voteAverage: 6.9, trend: "-2" },
+  { id: 710, title: "Wonka", posterPath: "/qhb1qOilapbapxWQn9jtRCMwXJF.jpg", releaseDate: "2023-12-06", voteAverage: 7.2, trend: "-5" },
+  { id: 711, title: "Madame Web", posterPath: "/rULWuutDcN5NvtiZi4FRPzRYWSh.jpg", releaseDate: "2024-02-14", voteAverage: 5.6, trend: "-8" },
+  { id: 712, title: "Argylle", posterPath: "/95VlSEfLMqeX36UVcHJuNlWEpwf.jpg", releaseDate: "2024-02-02", voteAverage: 6.1, trend: "-3" },
+];
+
+const timeFilters = [
+  { label: "Hari Ini", value: "today", active: true },
+  { label: "Minggu Ini", value: "week", active: false },
+  { label: "Bulan Ini", value: "month", active: false },
+];
+
+const contentTypes = [
+  { label: "Semua", value: "all", active: true },
+  { label: "Film", value: "movie", active: false },
+  { label: "Anime", value: "anime", active: false },
+  { label: "Series", value: "tv", active: false },
+];
+---
+
+<MainLayout title="Trending - ASTRO" description="Film dan serial yang sedang trending">
+  <!-- Hero Section -->
+  <div class="relative h-[50vh] overflow-hidden">
+    <img 
+      src="https://image.tmdb.org/t/p/original/rLb2cwF3Pazuxaj0sRXQ037tGI1.jpg" 
+      alt="Trending"
+      class="w-full h-full object-cover"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-dark-500 via-dark-500/70 to-transparent"></div>
+    <div class="absolute inset-0 flex items-center justify-center text-center">
+      <div>
+        <span class="badge bg-red-500/20 text-red-400 border border-red-500/30 mb-4">
+          🔥 TRENDING
+        </span>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4">
+          Sedang Trending
+        </h1>
+        <p class="text-xl text-secondary-300 max-w-2xl mx-auto">
+          Film dan serial yang paling banyak ditonton dan dibicarakan
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-custom py-8">
+    <!-- Filter Bar -->
+    <section class="mb-8 -mt-16 relative z-10">
+      <div class="card p-4">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+          <!-- Time Filter -->
+          <div class="flex items-center gap-2">
+            <span class="text-secondary-400 text-sm mr-2">Periode:</span>
+            {timeFilters.map((filter) => (
+              <button 
+                class={`px-4 py-2 rounded-lg transition-all ${
+                  filter.active 
+                    ? 'bg-primary-500 text-white' 
+                    : 'bg-dark-300 text-secondary-300 hover:bg-dark-200'
+                }`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+
+          <!-- Content Type Filter -->
+          <div class="flex items-center gap-2">
+            <span class="text-secondary-400 text-sm mr-2">Tipe:</span>
+            {contentTypes.map((type) => (
+              <button 
+                class={`px-4 py-2 rounded-lg transition-all ${
+                  type.active 
+                    ? 'bg-violet-500 text-white' 
+                    : 'bg-dark-300 text-secondary-300 hover:bg-dark-200'
+                }`}
+              >
+                {type.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trending Stats -->
+    <section class="mb-12">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="card p-6 text-center">
+          <div class="text-4xl font-bold text-gradient mb-1">1.2M</div>
+          <div class="text-secondary-400 text-sm">Total Penonton</div>
+          <div class="text-green-400 text-xs mt-1">↑ 15% dari kemarin</div>
+        </div>
+        <div class="card p-6 text-center">
+          <div class="text-4xl font-bold text-gradient-accent mb-1">50K</div>
+          <div class="text-secondary-400 text-sm">Review Baru</div>
+          <div class="text-green-400 text-xs mt-1">↑ 8% dari kemarin</div>
+        </div>
+        <div class="card p-6 text-center">
+          <div class="text-4xl font-bold text-gradient mb-1">125</div>
+          <div class="text-secondary-400 text-sm">Film Trending</div>
+          <div class="text-red-400 text-xs mt-1">↓ 3% dari kemarin</div>
+        </div>
+        <div class="card p-6 text-center">
+          <div class="text-4xl font-bold text-gradient-accent mb-1">#1</div>
+          <div class="text-secondary-400 text-sm">Top Trending</div>
+          <div class="text-secondary-500 text-xs mt-1">Dune: Part Two</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top 3 Trending -->
+    <section class="mb-12">
+      <h2 class="text-xl font-bold text-white mb-6">🏆 Top 3 Trending</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {trendingMovies.slice(0, 3).map((movie, index) => (
+          <div class="card overflow-hidden group relative">
+            <div class={`absolute top-0 left-0 w-16 h-16 flex items-center justify-center ${
+              index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : 'bg-amber-700'
+            } text-dark-500 font-bold text-2xl z-10`}
+            style="clip-path: polygon(0 0, 100% 0, 0 100%);">
+              <span class="absolute top-1 left-2">{index + 1}</span>
+            </div>
+            <div class="aspect-video overflow-hidden">
+              <img 
+                src={`https://image.tmdb.org/t/p/w780${movie.posterPath}`}
+                alt={movie.title}
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-bold text-white group-hover:text-primary-400 transition-colors">
+                {movie.title}
+              </h3>
+              <div class="flex items-center justify-between mt-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-yellow-400">⭐</span>
+                  <span class="text-white font-medium">{movie.voteAverage.toFixed(1)}</span>
+                </div>
+                <div class={`text-sm font-medium ${
+                  movie.trend.startsWith('+') ? 'text-green-400' : 'text-red-400'
+                }`}>
+                  {movie.trend.startsWith('+') ? '↑' : '↓'} {movie.trend}%
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Full Trending List -->
+    <section>
+      <h2 class="text-xl font-bold text-white mb-6">📊 Trending Lengkap</h2>
+      
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        {trendingMovies.map((movie, index) => (
+          <div class="group relative">
+            <!-- Ranking Badge -->
+            <div class="absolute -top-2 -left-2 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center z-10 text-white font-bold text-sm">
+              {index + 1}
+            </div>
+            
+            <MovieCard 
+              id={movie.id}
+              title={movie.title}
+              posterPath={movie.posterPath}
+              releaseDate={movie.releaseDate}
+              voteAverage={movie.voteAverage}
+            />
+            
+            <!-- Trend Indicator -->
+            <div class={`mt-2 text-center text-sm font-medium ${
+              movie.trend.startsWith('+') ? 'text-green-400' : 'text-red-400'
+            }`}>
+              {movie.trend.startsWith('+') ? '📈' : '📉'} {movie.trend}% tren
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-center gap-2 mt-12">
+        <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-400 hover:bg-dark-200 transition-colors" disabled>
+          <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <button class="w-10 h-10 rounded-lg bg-primary-500 text-white">1</button>
+        <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">2</button>
+        <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">3</button>
+        <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">4</button>
+        <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">5</button>
+        <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">
+          <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- Trending Topics -->
+    <section class="mt-16">
+      <h2 class="text-xl font-bold text-white mb-6">💬 Trending Topics</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="card p-4 flex items-center gap-4">
+          <span class="text-2xl">🎬</span>
+          <div class="flex-1">
+            <h3 class="text-white font-medium">#DunePartTwo</h3>
+            <p class="text-secondary-400 text-sm">24.5K diskusi</p>
+          </div>
+          <span class="text-green-400 text-sm">↑ 15%</span>
+        </div>
+        <div class="card p-4 flex items-center gap-4">
+          <span class="text-2xl">🎌</span>
+          <div class="flex-1">
+            <h3 class="text-white font-medium">#AnimeFilm</h3>
+            <p class="text-secondary-400 text-sm">18.2K diskusi</p>
+          </div>
+          <span class="text-green-400 text-sm">↑ 12%</span>
+        </div>
+        <div class="card p-4 flex items-center gap-4">
+          <span class="text-2xl">🏆</span>
+          <div class="flex-1">
+            <h3 class="text-white font-medium">#Oscars2024</h3>
+            <p class="text-secondary-400 text-sm">15.8K diskusi</p>
+          </div>
+          <span class="text-red-400 text-sm">↓ 5%</span>
+        </div>
+        <div class="card p-4 flex items-center gap-4">
+          <span class="text-2xl">🦍</span>
+          <div class="flex-1">
+            <h3 class="text-white font-medium">#GodzillaXKong</h3>
+            <p class="text-secondary-400 text-sm">12.4K diskusi</p>
+          </div>
+          <span class="text-green-400 text-sm">↑ 28%</span>
+        </div>
+        <div class="card p-4 flex items-center gap-4">
+          <span class="text-2xl">🐼</span>
+          <div class="flex-1">
+            <h3 class="text-white font-medium">#KungFuPanda4</h3>
+            <p class="text-secondary-400 text-sm">10.1K diskusi</p>
+          </div>
+          <span class="text-green-400 text-sm">↑ 8%</span>
+        </div>
+        <div class="card p-4 flex items-center gap-4">
+          <span class="text-2xl">👻</span>
+          <div class="flex-1">
+            <h3 class="text-white font-medium">#Ghostbusters</h3>
+            <p class="text-secondary-400 text-sm">8.7K diskusi</p>
+          </div>
+          <span class="text-green-400 text-sm">↑ 10%</span>
+        </div>
+      </div>
+    </section>
+  </div>
+</MainLayout>

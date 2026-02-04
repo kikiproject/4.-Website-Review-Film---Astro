@@ -1,0 +1,147 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import MovieCard from '../components/MovieCard.astro';
+
+const animeMovies = [
+  { id: 301, title: "Suzume", posterPath: "/vIeu8WysZrTSFb2uhPViKjX9EcC.jpg", releaseDate: "2022-11-11", voteAverage: 8.0 },
+  { id: 302, title: "The Boy and the Heron", posterPath: "/jDQPkgzerGophKRRn7MKm071vGS.jpg", releaseDate: "2023-07-14", voteAverage: 7.5 },
+  { id: 303, title: "Jujutsu Kaisen 0", posterPath: "/23oJaeBh0FDk2mQ2P240PU9Xxfh.jpg", releaseDate: "2021-12-24", voteAverage: 8.2 },
+  { id: 304, title: "One Piece Film: Red", posterPath: "/m80kPdrmmtEh9wlLroCp0bwUGH0.jpg", releaseDate: "2022-08-06", voteAverage: 7.3 },
+  { id: 305, title: "Dragon Ball Super: Super Hero", posterPath: "/rugyJdeoJm7cSJL1q4jBpTNbxyU.jpg", releaseDate: "2022-06-11", voteAverage: 7.5 },
+  { id: 306, title: "Demon Slayer: Swordsmith Village", posterPath: "/AqvtzwpD37m8iiPVY8hKsyMIeQ.jpg", releaseDate: "2023-02-03", voteAverage: 8.0 },
+  { id: 307, title: "Your Name", posterPath: "/q719jXXEzOoYaps6babgKnONONX.jpg", releaseDate: "2016-08-26", voteAverage: 8.5 },
+  { id: 308, title: "Spirited Away", posterPath: "/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg", releaseDate: "2001-07-20", voteAverage: 8.9 },
+  { id: 309, title: "Weathering With You", posterPath: "/qgrk7r1fV4IjuoeiGS5HOhXNdLJ.jpg", releaseDate: "2019-07-19", voteAverage: 8.3 },
+  { id: 310, title: "A Silent Voice", posterPath: "/tuFaWiqX0TXoWu7DGNcmX3UW7sT.jpg", releaseDate: "2016-09-17", voteAverage: 8.4 },
+  { id: 311, title: "Princess Mononoke", posterPath: "/jHWmNr7m544fJ8eItsfNk8fs2Ed.jpg", releaseDate: "1997-07-12", voteAverage: 8.4 },
+  { id: 312, title: "My Neighbor Totoro", posterPath: "/rtGDOeG9LzoerkDGZF9dnVeLENB.jpg", releaseDate: "1988-04-16", voteAverage: 8.1 },
+];
+
+const studios = [
+  { name: "Studio Ghibli", logo: "🏯", count: 24 },
+  { name: "Toei Animation", logo: "⚡", count: 156 },
+  { name: "Madhouse", logo: "🎬", count: 89 },
+  { name: "MAPPA", logo: "🔥", count: 42 },
+  { name: "Ufotable", logo: "✨", count: 28 },
+  { name: "Kyoto Animation", logo: "🌸", count: 35 },
+];
+---
+
+<MainLayout title="Anime - ASTRO" description="Koleksi anime terlengkap dari Jepang">
+  <!-- Hero Section -->
+  <div class="relative h-[50vh] overflow-hidden">
+    <img 
+      src="https://image.tmdb.org/t/p/original/4HodYYKEIsGOdinkGi2Ucz6X9i0.jpg" 
+      alt="Anime"
+      class="w-full h-full object-cover"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-dark-500 via-dark-500/70 to-transparent"></div>
+    <div class="absolute inset-0 flex items-center justify-center text-center">
+      <div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4">
+          🎌 Anime
+        </h1>
+        <p class="text-xl text-secondary-300 max-w-2xl mx-auto">
+          Temukan film anime terbaik dari berbagai studio Jepang
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-custom py-8">
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 -mt-16 relative z-10">
+      <div class="card p-6 text-center">
+        <div class="text-3xl font-bold text-gradient">5,000+</div>
+        <div class="text-secondary-400 text-sm">Judul Anime</div>
+      </div>
+      <div class="card p-6 text-center">
+        <div class="text-3xl font-bold text-gradient-accent">200+</div>
+        <div class="text-secondary-400 text-sm">Studio</div>
+      </div>
+      <div class="card p-6 text-center">
+        <div class="text-3xl font-bold text-gradient">50+</div>
+        <div class="text-secondary-400 text-sm">Genre</div>
+      </div>
+      <div class="card p-6 text-center">
+        <div class="text-3xl font-bold text-gradient-accent">100K+</div>
+        <div class="text-secondary-400 text-sm">Review</div>
+      </div>
+    </div>
+
+    <!-- Studios -->
+    <section class="mb-12">
+      <h2 class="text-xl font-bold text-white mb-6">Studio Populer</h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {studios.map((studio) => (
+          <a href={`/studio/${studio.name.toLowerCase().replace(' ', '-')}`} class="card-hover p-4 text-center group">
+            <div class="text-3xl mb-2">{studio.logo}</div>
+            <h3 class="text-white font-medium text-sm group-hover:text-primary-400 transition-colors">
+              {studio.name}
+            </h3>
+            <p class="text-secondary-500 text-xs">{studio.count} judul</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="mb-12">
+      <h2 class="text-xl font-bold text-white mb-6">Kategori</h2>
+      <div class="flex flex-wrap gap-3">
+        <a href="/anime/movie" class="badge-primary text-base px-4 py-2">Film Anime</a>
+        <a href="/anime/series" class="badge-violet text-base px-4 py-2">Anime Series</a>
+        <a href="/anime/ova" class="badge-magenta text-base px-4 py-2">OVA</a>
+        <a href="/anime/ongoing" class="badge bg-green-500/20 text-green-400 border border-green-500/30 text-base px-4 py-2">Ongoing</a>
+        <a href="/anime/completed" class="badge bg-blue-500/20 text-blue-400 border border-blue-500/30 text-base px-4 py-2">Completed</a>
+      </div>
+    </section>
+
+    <!-- Genre Tags -->
+    <section class="mb-12">
+      <h2 class="text-xl font-bold text-white mb-6">Genre Anime</h2>
+      <div class="flex flex-wrap gap-2">
+        {['Shonen', 'Shojo', 'Seinen', 'Slice of Life', 'Isekai', 'Mecha', 'Sports', 'Supernatural', 'Psychological', 'Comedy', 'Romance', 'Action', 'Fantasy', 'Horror', 'Mystery'].map((genre) => (
+          <a 
+            href={`/anime/genre/${genre.toLowerCase().replace(' ', '-')}`}
+            class="px-4 py-2 bg-dark-300 text-secondary-300 rounded-lg hover:bg-dark-200 hover:text-white transition-all duration-300"
+          >
+            {genre}
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Anime Grid -->
+    <section>
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-white">Semua Anime</h2>
+        <select class="input w-48 text-sm">
+          <option value="popularity">Paling Populer</option>
+          <option value="rating">Rating Tertinggi</option>
+          <option value="newest">Terbaru</option>
+          <option value="oldest">Terlama</option>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        {animeMovies.map((movie) => (
+          <MovieCard 
+            id={movie.id}
+            title={movie.title}
+            posterPath={movie.posterPath}
+            releaseDate={movie.releaseDate}
+            voteAverage={movie.voteAverage}
+          />
+        ))}
+      </div>
+
+      <!-- Load More -->
+      <div class="text-center mt-12">
+        <button class="btn-primary px-8">
+          Muat Lebih Banyak
+        </button>
+      </div>
+    </section>
+  </div>
+</MainLayout>

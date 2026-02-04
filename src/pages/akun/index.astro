@@ -1,0 +1,307 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import MovieCard from '../../components/MovieCard.astro';
+
+const user = {
+  name: "John Doe",
+  username: "johndoe",
+  email: "john@example.com",
+  avatar: "https://ui-avatars.com/api/?name=John+Doe&background=1A2DE7&color=fff&size=128",
+  joinDate: "2023-06-15",
+  bio: "Pecinta film dan anime dari Indonesia. Suka nonton film action dan sci-fi. Anime favorit: Attack on Titan, Demon Slayer.",
+  stats: {
+    reviews: 45,
+    watchlist: 128,
+    favorites: 67,
+    followers: 234,
+    following: 89,
+  },
+  badges: [
+    { name: "Reviewer Pro", icon: "✍️", description: "Telah menulis 50+ review" },
+    { name: "Anime Lover", icon: "🎌", description: "Menonton 100+ anime" },
+    { name: "Early Bird", icon: "🐦", description: "Member awal ASTRO" },
+  ],
+  recentActivity: [
+    { type: "review", movie: "Dune: Part Two", date: "2 jam lalu", rating: 9 },
+    { type: "watchlist", movie: "Kung Fu Panda 4", date: "5 jam lalu" },
+    { type: "favorite", movie: "Oppenheimer", date: "1 hari lalu" },
+    { type: "review", movie: "Poor Things", date: "2 hari lalu", rating: 8 },
+  ],
+};
+
+const recentReviews = [
+  { id: 1, movie: "Dune: Part Two", poster: "/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg", rating: 9, content: "Film yang luar biasa! Visual yang memukau dan cerita yang mendalam.", date: "2 jam lalu", likes: 24 },
+  { id: 2, movie: "Poor Things", poster: "/kCGlIMHnOm8JPXq3rXM6c5wMxcT.jpg", rating: 8, content: "Emma Stone tampil memukau. Film yang unik dan tidak seperti yang lain.", date: "2 hari lalu", likes: 18 },
+  { id: 3, movie: "Oppenheimer", poster: "/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg", rating: 9, content: "Christopher Nolan tidak pernah mengecewakan. Masterpiece sinematik.", date: "1 minggu lalu", likes: 42 },
+];
+
+const watchlistMovies = [
+  { id: 101, title: "Kung Fu Panda 4", posterPath: "/kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg", releaseDate: "2024-03-08", voteAverage: 7.1 },
+  { id: 102, title: "Ghostbusters: Frozen Empire", posterPath: "/e1J2oNzSBdou01sUvriVedr8C8i.jpg", releaseDate: "2024-03-22", voteAverage: 6.7 },
+  { id: 103, title: "Godzilla x Kong", posterPath: "/z1p34vh7dEOnLDmyCrlUVLuoDzd.jpg", releaseDate: "2024-03-27", voteAverage: 7.2 },
+  { id: 104, title: "Immaculate", posterPath: "/fdZpvODTX5wwkD0ikZNaClE4AoW.jpg", releaseDate: "2024-03-22", voteAverage: 6.2 },
+];
+---
+
+<MainLayout title="Profil Saya - ASTRO" description="Halaman profil pengguna">
+  <div class="container-custom py-8">
+    <!-- Profile Header -->
+    <section class="mb-8">
+      <div class="card p-6 md:p-8">
+        <div class="flex flex-col md:flex-row gap-6 items-center md:items-start">
+          <!-- Avatar -->
+          <div class="relative">
+            <img 
+              src={user.avatar}
+              alt={user.name}
+              class="w-32 h-32 rounded-full border-4 border-primary-500"
+            />
+            <button class="absolute bottom-0 right-0 w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center text-white hover:bg-primary-600 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- User Info -->
+          <div class="flex-1 text-center md:text-left">
+            <div class="flex flex-col md:flex-row items-center gap-4 mb-4">
+              <h1 class="text-2xl font-bold text-white">{user.name}</h1>
+              <span class="badge-primary">@{user.username}</span>
+            </div>
+            <p class="text-secondary-300 mb-4 max-w-2xl">{user.bio}</p>
+            <div class="flex items-center justify-center md:justify-start gap-4 text-sm text-secondary-400">
+              <span>📅 Bergabung {new Date(user.joinDate).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}</span>
+              <span>📍 Indonesia</span>
+            </div>
+
+            <!-- Badges -->
+            <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 mt-4">
+              {user.badges.map((badge) => (
+                <div class="badge bg-dark-300 border border-dark-100 cursor-help" title={badge.description}>
+                  <span class="mr-1">{badge.icon}</span>
+                  {badge.name}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex gap-2">
+            <a href="/akun/pengaturan" class="btn-outline py-2 px-4">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              Pengaturan
+            </a>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mt-8 pt-8 border-t border-dark-200">
+          <a href="/akun/review-saya" class="text-center group">
+            <div class="text-2xl font-bold text-white group-hover:text-primary-400 transition-colors">{user.stats.reviews}</div>
+            <div class="text-secondary-400 text-sm">Review</div>
+          </a>
+          <a href="/akun/watchlist" class="text-center group">
+            <div class="text-2xl font-bold text-white group-hover:text-primary-400 transition-colors">{user.stats.watchlist}</div>
+            <div class="text-secondary-400 text-sm">Watchlist</div>
+          </a>
+          <a href="/akun/favorit" class="text-center group">
+            <div class="text-2xl font-bold text-white group-hover:text-primary-400 transition-colors">{user.stats.favorites}</div>
+            <div class="text-secondary-400 text-sm">Favorit</div>
+          </a>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-white">{user.stats.followers}</div>
+            <div class="text-secondary-400 text-sm">Followers</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-white">{user.stats.following}</div>
+            <div class="text-secondary-400 text-sm">Following</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Menu -->
+    <section class="mb-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="/akun/watchlist" class="card-hover p-4 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-primary-500/20 flex items-center justify-center">
+            <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="text-white font-medium">Watchlist</div>
+            <div class="text-secondary-400 text-sm">{user.stats.watchlist} film</div>
+          </div>
+        </a>
+        <a href="/akun/favorit" class="card-hover p-4 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center">
+            <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="text-white font-medium">Favorit</div>
+            <div class="text-secondary-400 text-sm">{user.stats.favorites} film</div>
+          </div>
+        </a>
+        <a href="/akun/review-saya" class="card-hover p-4 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-violet-500/20 flex items-center justify-center">
+            <svg class="w-6 h-6 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="text-white font-medium">Review Saya</div>
+            <div class="text-secondary-400 text-sm">{user.stats.reviews} review</div>
+          </div>
+        </a>
+        <a href="/akun/aktivitas" class="card-hover p-4 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-magenta-500/20 flex items-center justify-center">
+            <svg class="w-6 h-6 text-magenta-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="text-white font-medium">Aktivitas</div>
+            <div class="text-secondary-400 text-sm">Riwayat</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Column -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Recent Reviews -->
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-white">Review Terbaru</h2>
+            <a href="/akun/review-saya" class="text-primary-400 hover:text-primary-300 text-sm">
+              Lihat Semua →
+            </a>
+          </div>
+          <div class="space-y-4">
+            {recentReviews.map((review) => (
+              <div class="card p-4">
+                <div class="flex gap-4">
+                  <img 
+                    src={`https://image.tmdb.org/t/p/w92${review.poster}`}
+                    alt={review.movie}
+                    class="w-16 h-24 object-cover rounded-lg"
+                  />
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                      <h3 class="text-white font-medium">{review.movie}</h3>
+                      <div class="flex items-center gap-1 bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded text-sm">
+                        <span>⭐</span>
+                        <span>{review.rating}/10</span>
+                      </div>
+                    </div>
+                    <p class="text-secondary-300 text-sm mb-2 line-clamp-2">{review.content}</p>
+                    <div class="flex items-center justify-between text-xs text-secondary-500">
+                      <span>{review.date}</span>
+                      <span>❤️ {review.likes} suka</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Watchlist Preview -->
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-white">Watchlist</h2>
+            <a href="/akun/watchlist" class="text-primary-400 hover:text-primary-300 text-sm">
+              Lihat Semua →
+            </a>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {watchlistMovies.map((movie) => (
+              <MovieCard 
+                id={movie.id}
+                title={movie.title}
+                posterPath={movie.posterPath}
+                releaseDate={movie.releaseDate}
+                voteAverage={movie.voteAverage}
+              />
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column -->
+      <div class="space-y-6">
+        <!-- Recent Activity -->
+        <section>
+          <h2 class="text-lg font-bold text-white mb-4">Aktivitas Terbaru</h2>
+          <div class="card p-4">
+            <div class="space-y-4">
+              {user.recentActivity.map((activity) => (
+                <div class="flex items-center gap-3 pb-4 border-b border-dark-200 last:border-0 last:pb-0">
+                  <div class={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    activity.type === 'review' 
+                      ? 'bg-violet-500/20 text-violet-400' 
+                      : activity.type === 'watchlist' 
+                        ? 'bg-primary-500/20 text-primary-400' 
+                        : 'bg-red-500/20 text-red-400'
+                  }`}>
+                    {activity.type === 'review' ? '✍️' : activity.type === 'watchlist' ? '🔖' : '❤️'}
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-white text-sm truncate">
+                      {activity.type === 'review' 
+                        ? `Review ${activity.movie}` 
+                        : activity.type === 'watchlist' 
+                          ? `Menambah ${activity.movie} ke watchlist` 
+                          : `Menyukai ${activity.movie}`}
+                    </p>
+                    <p class="text-secondary-500 text-xs">{activity.date}</p>
+                  </div>
+                  {activity.rating && (
+                    <span class="text-yellow-400 text-sm">⭐ {activity.rating}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+            <a href="/akun/aktivitas" class="block text-center text-primary-400 hover:text-primary-300 text-sm mt-4 pt-4 border-t border-dark-200">
+              Lihat Semua Aktivitas
+            </a>
+          </div>
+        </section>
+
+        <!-- Stats Card -->
+        <section>
+          <h2 class="text-lg font-bold text-white mb-4">Statistik</h2>
+          <div class="card p-4">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="text-secondary-400">Film Ditonton</span>
+                <span class="text-white font-medium">156</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-secondary-400">Jam Menonton</span>
+                <span class="text-white font-medium">312 jam</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-secondary-400">Rating Rata-rata</span>
+                <span class="text-white font-medium">7.8/10</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-secondary-400">Genre Favorit</span>
+                <span class="text-white font-medium">Action</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</MainLayout>

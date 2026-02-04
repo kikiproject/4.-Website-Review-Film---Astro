@@ -1,0 +1,169 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import MovieCard from '../../components/MovieCard.astro';
+
+const watchlistMovies = [
+  { id: 101, title: "Kung Fu Panda 4", posterPath: "/kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg", releaseDate: "2024-03-08", voteAverage: 7.1, addedDate: "2024-03-15" },
+  { id: 102, title: "Ghostbusters: Frozen Empire", posterPath: "/e1J2oNzSBdou01sUvriVedr8C8i.jpg", releaseDate: "2024-03-22", voteAverage: 6.7, addedDate: "2024-03-12" },
+  { id: 103, title: "Godzilla x Kong: The New Empire", posterPath: "/z1p34vh7dEOnLDmyCrlUVLuoDzd.jpg", releaseDate: "2024-03-27", voteAverage: 7.2, addedDate: "2024-03-10" },
+  { id: 104, title: "Immaculate", posterPath: "/fdZpvODTX5wwkD0ikZNaClE4AoW.jpg", releaseDate: "2024-03-22", voteAverage: 6.2, addedDate: "2024-03-08" },
+  { id: 105, title: "Dune: Part Two", posterPath: "/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg", releaseDate: "2024-02-28", voteAverage: 8.4, addedDate: "2024-03-01" },
+  { id: 106, title: "Bob Marley: One Love", posterPath: "/mKWalirPreEdCKxLWPsLLgq5rYN.jpg", releaseDate: "2024-02-14", voteAverage: 6.9, addedDate: "2024-02-28" },
+  { id: 107, title: "Deadpool & Wolverine", posterPath: "/8b8R8l88Qje9dn9OE8PY05Nxl1X.jpg", releaseDate: "2024-07-26", voteAverage: 0, addedDate: "2024-02-25" },
+  { id: 108, title: "Kingdom of the Planet of the Apes", posterPath: "/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg", releaseDate: "2024-05-10", voteAverage: 0, addedDate: "2024-02-20" },
+  { id: 109, title: "Furiosa: A Mad Max Saga", posterPath: "/iADOJ8Zymht2JPMoy3R7xceZprc.jpg", releaseDate: "2024-05-24", voteAverage: 0, addedDate: "2024-02-15" },
+  { id: 110, title: "Inside Out 2", posterPath: "/gKkl37BQuKTanygYQG1pyYgLVgf.jpg", releaseDate: "2024-06-14", voteAverage: 0, addedDate: "2024-02-10" },
+  { id: 111, title: "Oppenheimer", posterPath: "/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg", releaseDate: "2023-07-19", voteAverage: 8.1, addedDate: "2024-02-05" },
+  { id: 112, title: "Poor Things", posterPath: "/kCGlIMHnOm8JPXq3rXM6c5wMxcT.jpg", releaseDate: "2023-12-08", voteAverage: 7.9, addedDate: "2024-02-01" },
+];
+
+const categories = [
+  { label: "Semua", count: 128, active: true },
+  { label: "Sudah Tayang", count: 84, active: false },
+  { label: "Akan Tayang", count: 44, active: false },
+];
+---
+
+<MainLayout title="Watchlist Saya - ASTRO" description="Daftar film yang ingin ditonton">
+  <div class="container-custom py-8">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+      <div>
+        <nav class="flex items-center gap-2 text-sm text-secondary-400 mb-2">
+          <a href="/akun" class="hover:text-primary-400 transition-colors">Akun</a>
+          <span>/</span>
+          <span class="text-white">Watchlist</span>
+        </nav>
+        <h1 class="text-3xl font-bold text-white">🔖 Watchlist Saya</h1>
+        <p class="text-secondary-400 mt-1">Film yang ingin kamu tonton</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <select class="input w-48 text-sm">
+          <option value="added">Ditambahkan Terbaru</option>
+          <option value="release">Tanggal Rilis</option>
+          <option value="rating">Rating Tertinggi</option>
+          <option value="title">Judul A-Z</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="flex flex-wrap gap-2 mb-8">
+      {categories.map((cat) => (
+        <button 
+          class={`px-4 py-2 rounded-lg transition-all ${
+            cat.active 
+              ? 'bg-primary-500 text-white' 
+              : 'bg-dark-300 text-secondary-300 hover:bg-dark-200'
+          }`}
+        >
+          {cat.label}
+          <span class={`ml-2 text-xs ${cat.active ? 'text-white/70' : 'text-secondary-500'}`}>
+            ({cat.count})
+          </span>
+        </button>
+      ))}
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card p-4 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <label class="flex items-center gap-2 text-secondary-300 cursor-pointer">
+          <input type="checkbox" class="form-checkbox rounded bg-dark-300 border-dark-100 text-primary-500" />
+          <span class="text-sm">Pilih Semua</span>
+        </label>
+        <span class="text-secondary-500 text-sm">0 film dipilih</span>
+      </div>
+      <div class="flex gap-2">
+        <button class="btn-outline py-2 px-4 text-sm" disabled>
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+          </svg>
+          Pindah ke Favorit
+        </button>
+        <button class="btn-outline py-2 px-4 text-sm text-red-400 border-red-400/30 hover:bg-red-500/10" disabled>
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+          </svg>
+          Hapus dari Watchlist
+        </button>
+      </div>
+    </div>
+
+    <!-- Movies Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+      {watchlistMovies.map((movie) => (
+        <div class="group relative">
+          <!-- Checkbox -->
+          <div class="absolute top-2 left-2 z-10">
+            <input 
+              type="checkbox" 
+              class="w-5 h-5 rounded bg-dark-500/80 border-2 border-white/50 text-primary-500 focus:ring-primary-500 cursor-pointer"
+            />
+          </div>
+          
+          <MovieCard 
+            id={movie.id}
+            title={movie.title}
+            posterPath={movie.posterPath}
+            releaseDate={movie.releaseDate}
+            voteAverage={movie.voteAverage}
+          />
+          
+          <!-- Added Date -->
+          <div class="mt-2 text-center">
+            <span class="text-secondary-500 text-xs">
+              Ditambahkan: {new Date(movie.addedDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+            </span>
+          </div>
+
+          <!-- Quick Actions on Hover -->
+          <div class="absolute inset-0 bg-dark-500/90 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 pointer-events-none group-hover:pointer-events-auto">
+            <a href={`/film/${movie.id}`} class="btn-primary py-2 px-4 text-sm">
+              Lihat Detail
+            </a>
+            <button class="btn-outline py-2 px-4 text-sm">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+              Favorit
+            </button>
+            <button class="text-red-400 hover:text-red-300 text-sm flex items-center gap-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+              Hapus
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex items-center justify-center gap-2 mt-12">
+      <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-400 hover:bg-dark-200 transition-colors" disabled>
+        <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+      <button class="w-10 h-10 rounded-lg bg-primary-500 text-white">1</button>
+      <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">2</button>
+      <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">3</button>
+      <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">
+        <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Empty State (hidden by default) -->
+    <div class="hidden text-center py-16">
+      <div class="text-6xl mb-4">📭</div>
+      <h2 class="text-xl font-bold text-white mb-2">Watchlist Kosong</h2>
+      <p class="text-secondary-400 mb-6">Kamu belum menambahkan film ke watchlist</p>
+      <a href="/jelajahi" class="btn-primary">
+        Jelajahi Film
+      </a>
+    </div>
+  </div>
+</MainLayout>

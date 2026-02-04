@@ -1,0 +1,42 @@
+{
+  "name": "astro-movie-review",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "ASTRO - Website Review Film dengan tampilan modern dan fitur lengkap",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.0",
+    "@astrojs/node": "^8.3.0",
+    "@astrojs/react": "^3.6.0",
+    "@astrojs/tailwind": "^5.1.0",
+    "@heroicons/react": "^2.1.5",
+    "@iconify/react": "^6.0.2",
+    "@tanstack/react-query": "^5.51.0",
+    "aos": "^2.3.4",
+    "astro": "^4.15.0",
+    "axios": "^1.7.0",
+    "date-fns": "^3.6.0",
+    "framer-motion": "^11.3.0",
+    "js-cookie": "^3.0.5",
+    "lucide-react": "^0.563.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.4.1",
+    "react-player": "^2.16.0",
+    "socket.io-client": "^4.7.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.5.0",
+    "zustand": "^4.5.0"
+  },
+  "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0"
+  }
+}

@@ -1,0 +1,201 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import MovieCard from '../components/MovieCard.astro';
+
+// Film yang sedang tayang di bioskop - Mix Hollywood, Indonesia, Korea, dan Anime
+const nowPlayingMovies = [
+  // Hollywood
+  { id: 501, title: "Dune: Part Two", posterPath: "https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg", releaseDate: "2024-02-28", voteAverage: 8.4, category: "Hollywood" },
+  { id: 502, title: "Kung Fu Panda 4", posterPath: "https://image.tmdb.org/t/p/w500/kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg", releaseDate: "2024-03-08", voteAverage: 7.1, category: "Hollywood" },
+  { id: 504, title: "Godzilla x Kong", posterPath: "https://image.tmdb.org/t/p/w500/z1p34vh7dEOnLDmyCrlUVLuoDzd.jpg", releaseDate: "2024-03-27", voteAverage: 7.2, category: "Hollywood" },
+  
+  // Anime
+  { id: 601, title: "Suzume no Tojimari", posterPath: "https://image.tmdb.org/t/p/w500/vIeu8WysZrTSFb2uhPViKjX9EcC.jpg", releaseDate: "2024-01-15", voteAverage: 8.0, category: "Anime" },
+  { id: 602, title: "The Boy and the Heron", posterPath: "https://image.tmdb.org/t/p/w500/jDQPkgzerGophKRRn7MKm071vGS.jpg", releaseDate: "2024-01-20", voteAverage: 7.5, category: "Anime" },
+  { id: 603, title: "Demon Slayer: To the Hashira Training", posterPath: "https://image.tmdb.org/t/p/w500/AqvtzwpD37m8iiPVY8hKsyMIeQ.jpg", releaseDate: "2024-02-10", voteAverage: 8.2, category: "Anime" },
+  { id: 604, title: "Haikyuu!! The Dumpster Battle", posterPath: "https://image.tmdb.org/t/p/w500/sMyMhDVdRPe4UdJZSkzHjqlrmMq.jpg", releaseDate: "2024-02-16", voteAverage: 8.5, category: "Anime" },
+  { id: 605, title: "Blue Lock: Episode Nagi", posterPath: "https://image.tmdb.org/t/p/w500/xvB8RaDJUe0nRJSO6F8lKiCdGII.jpg", releaseDate: "2024-02-20", voteAverage: 7.8, category: "Anime" },
+  
+  // Korea
+  { id: 701, title: "Exhuma", posterPath: "https://image.tmdb.org/t/p/w500/b3mdmjYTEL70j7nuXATUAD9qgu4.jpg", releaseDate: "2024-02-22", voteAverage: 7.6, category: "Korea" },
+  { id: 702, title: "The Moon", posterPath: "https://image.tmdb.org/t/p/w500/oLwivUCqfEznu3xhP2Ma1rdwnNH.jpg", releaseDate: "2024-01-18", voteAverage: 7.2, category: "Korea" },
+  
+  // Indonesia
+  { id: 801, title: "Siksa Kubur", posterPath: "https://image.tmdb.org/t/p/w500/1yRLrX8gu4cH9vMmY7MG2fLSv2o.jpg", releaseDate: "2024-02-15", voteAverage: 7.4, category: "Indonesia" },
+  { id: 802, title: "Vina: Sebelum 7 Hari", posterPath: "https://image.tmdb.org/t/p/w500/rRdru6REr9i3WIHv2mntpcgxnoY.jpg", releaseDate: "2024-03-01", voteAverage: 7.8, category: "Indonesia" },
+];
+
+const cinemas = [
+  { name: "CGV Cinemas", location: "25 lokasi", price: "Rp 50.000 - Rp 200.000" },
+  { name: "Cinema XXI", location: "156 lokasi", price: "Rp 35.000 - Rp 100.000" },
+  { name: "Cinépolis", location: "15 lokasi", price: "Rp 45.000 - Rp 150.000" },
+  { name: "Platinum Cineplex", location: "12 lokasi", price: "Rp 25.000 - Rp 60.000" },
+];
+---
+
+<MainLayout title="Sedang Tayang - ASTRO" description="Film yang sedang tayang di bioskop Indonesia">
+  <!-- Hero Section -->
+  <div class="relative h-[50vh] overflow-hidden">
+    <img 
+      src="https://image.tmdb.org/t/p/original/rLb2cwF3Pazuxaj0sRXQ037tGI1.jpg" 
+      alt="Now Playing"
+      class="w-full h-full object-cover"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-dark-500 via-dark-500/70 to-transparent"></div>
+    <div class="absolute inset-0 flex items-center justify-center text-center">
+      <div>
+        <span class="badge-primary mb-4">🔴 LIVE NOW</span>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4">
+          🎬 Sedang Tayang
+        </h1>
+        <p class="text-xl text-secondary-300 max-w-2xl mx-auto">
+          Film-film yang sedang tayang di bioskop seluruh Indonesia
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-custom py-8">
+    <!-- Quick Info -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12 -mt-16 relative z-10">
+      {cinemas.map((cinema) => (
+        <div class="card p-4">
+          <h3 class="font-bold text-white mb-1">{cinema.name}</h3>
+          <p class="text-secondary-400 text-sm">{cinema.location}</p>
+          <p class="text-primary-400 text-sm font-medium">{cinema.price}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Schedule Info -->
+    <section class="mb-8">
+      <div class="card p-6 bg-gradient-to-r from-primary-500/10 to-violet-500/10 border border-primary-500/30">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-white mb-1">📍 Pilih Lokasi Bioskop</h2>
+            <p class="text-secondary-300 text-sm">Lihat jadwal dan harga tiket di bioskop terdekat</p>
+          </div>
+          <div class="flex gap-2">
+            <select class="input w-48">
+              <option value="">Pilih Kota</option>
+              <option value="jakarta">Jakarta</option>
+              <option value="bandung">Bandung</option>
+              <option value="surabaya">Surabaya</option>
+              <option value="yogyakarta">Yogyakarta</option>
+              <option value="medan">Medan</option>
+            </select>
+            <button class="btn-primary">
+              Cari Bioskop
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filter Bar -->
+    <section class="mb-8">
+      <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div class="flex flex-wrap gap-2">
+          <button class="badge-primary">Semua</button>
+          <button class="badge">Hollywood</button>
+          <button class="badge">Indonesia</button>
+          <button class="badge">Korea</button>
+          <button class="badge">Anime</button>
+          <button class="badge">India</button>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-secondary-400 text-sm">Tampilan:</span>
+          <div class="flex gap-1">
+            <button class="p-2 bg-primary-500 rounded-lg text-white">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+              </svg>
+            </button>
+            <button class="p-2 bg-dark-300 rounded-lg text-secondary-400 hover:text-white transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Movies Grid -->
+    <section>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        {nowPlayingMovies.map((movie) => (
+          <div class="group">
+            <MovieCard 
+              id={movie.id}
+              title={movie.title}
+              posterPath={movie.posterPath}
+              releaseDate={movie.releaseDate}
+              voteAverage={movie.voteAverage}
+            />
+            <div class="mt-2 space-y-1">
+              <div class="flex items-center gap-1">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span class="text-green-400 text-xs">Tayang Sekarang</span>
+              </div>
+              <button class="btn-primary w-full py-1.5 text-xs">
+                Lihat Jadwal
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Load More -->
+      <div class="text-center mt-12">
+        <button class="btn-primary px-8">
+          Muat Lebih Banyak
+        </button>
+      </div>
+    </section>
+
+    <!-- Coming Soon Preview -->
+    <section class="mt-16">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-white">🎬 Segera Tayang</h2>
+        <a href="/mendatang" class="text-primary-400 hover:text-primary-300 transition-colors flex items-center gap-1">
+          Lihat Semua
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </a>
+      </div>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="card p-4">
+          <div class="aspect-[2/3] rounded-lg bg-dark-300 mb-3 overflow-hidden">
+            <img src="https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg" alt="Coming Soon" class="w-full h-full object-cover" />
+          </div>
+          <h3 class="font-medium text-white text-sm mb-1">Kingdom of the Planet of the Apes</h3>
+          <p class="text-secondary-400 text-xs">Tayang: 10 Mei 2024</p>
+        </div>
+        <div class="card p-4">
+          <div class="aspect-[2/3] rounded-lg bg-dark-300 mb-3 overflow-hidden">
+            <img src="https://image.tmdb.org/t/p/w500/z1p34vh7dEOnLDmyCrlUVLuoDzd.jpg" alt="Coming Soon" class="w-full h-full object-cover" />
+          </div>
+          <h3 class="font-medium text-white text-sm mb-1">Furiosa: A Mad Max Saga</h3>
+          <p class="text-secondary-400 text-xs">Tayang: 24 Mei 2024</p>
+        </div>
+        <div class="card p-4">
+          <div class="aspect-[2/3] rounded-lg bg-dark-300 mb-3 overflow-hidden">
+            <img src="https://image.tmdb.org/t/p/w500/gKkl37BQuKTanygYQG1pyYgLVgf.jpg" alt="Coming Soon" class="w-full h-full object-cover" />
+          </div>
+          <h3 class="font-medium text-white text-sm mb-1">Inside Out 2</h3>
+          <p class="text-secondary-400 text-xs">Tayang: 14 Juni 2024</p>
+        </div>
+        <div class="card p-4">
+          <div class="aspect-[2/3] rounded-lg bg-dark-300 mb-3 overflow-hidden">
+            <img src="https://image.tmdb.org/t/p/w500/8b8R8l88Qje9dn9OE8PY05Nxl1X.jpg" alt="Coming Soon" class="w-full h-full object-cover" />
+          </div>
+          <h3 class="font-medium text-white text-sm mb-1">Deadpool & Wolverine</h3>
+          <p class="text-secondary-400 text-xs">Tayang: 26 Juli 2024</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</MainLayout>

@@ -1,0 +1,184 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import MovieCard from '../../components/MovieCard.astro';
+
+// Mock data - Replace with TMDB API call
+const movies = [
+  { id: 1, title: "Dune: Part Two", posterPath: "/8b8R8l88Qje9dn9OE8PY05Nxl1X.jpg", releaseDate: "2024-02-27", voteAverage: 8.4, genreIds: [878, 12, 18] },
+  { id: 2, title: "Oppenheimer", posterPath: "/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg", releaseDate: "2023-07-19", voteAverage: 8.5, genreIds: [18, 36, 53] },
+  { id: 3, title: "Spider-Verse", posterPath: "/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg", releaseDate: "2023-05-31", voteAverage: 8.7, genreIds: [16, 28, 12] },
+  { id: 4, title: "Godzilla x Kong", posterPath: "/z1p34vh7dEOnLDmyCrlUVLuoDzd.jpg", releaseDate: "2024-03-27", voteAverage: 7.1, genreIds: [878, 28, 12] },
+  { id: 5, title: "Wonka", posterPath: "/qhb1qOilapbapxWQn9jtRCMwXJF.jpg", releaseDate: "2023-12-06", voteAverage: 7.2, genreIds: [35, 10751, 14] },
+  { id: 6, title: "Aquaman 2", posterPath: "/8xV47NDrjdZDpkVcCFqkdHa3T0C.jpg", releaseDate: "2023-12-20", voteAverage: 6.8, genreIds: [28, 12, 14] },
+  { id: 7, title: "Migration", posterPath: "/ldfCF9RhR40mppkzmftxapaHTo.jpg", releaseDate: "2023-12-06", voteAverage: 7.5, genreIds: [16, 35, 12] },
+  { id: 8, title: "Anyone But You", posterPath: "/5qHoazZiaLe7oFBok7XlUhg96f2.jpg", releaseDate: "2023-12-21", voteAverage: 7.0, genreIds: [35, 10749] },
+  { id: 9, title: "The Beekeeper", posterPath: "/A7EByudX0eOzlkQ2FIbogzyazm2.jpg", releaseDate: "2024-01-08", voteAverage: 7.4, genreIds: [28, 53] },
+  { id: 10, title: "Poor Things", posterPath: "/kCGlIMHnOm8JPXq3rXM6c5wMxcT.jpg", releaseDate: "2023-12-07", voteAverage: 8.0, genreIds: [878, 35, 10749] },
+  { id: 11, title: "The Iron Claw", posterPath: "/nfs7DCYhgrEIgxKYbITHTzKsggf.jpg", releaseDate: "2023-12-21", voteAverage: 7.6, genreIds: [18, 36] },
+  { id: 12, title: "Argylle", posterPath: "/95VlSEfLMqeX36UVcHJuNlWEpwf.jpg", releaseDate: "2024-01-31", voteAverage: 6.5, genreIds: [28, 35, 53] },
+  { id: 13, title: "Kung Fu Panda 4", posterPath: "/kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg", releaseDate: "2024-03-02", voteAverage: 7.3, genreIds: [16, 28, 35] },
+  { id: 14, title: "Ghostbusters", posterPath: "/e1J2oNzSBdou01sUvriVuoYp0pJ.jpg", releaseDate: "2024-03-20", voteAverage: 6.8, genreIds: [14, 35, 12] },
+  { id: 15, title: "Bob Marley", posterPath: "/mKWalirPreEdCKDJjc5TKeOP2xi.jpg", releaseDate: "2024-02-14", voteAverage: 7.0, genreIds: [18, 10402] },
+  { id: 16, title: "Madame Web", posterPath: "/rULWuutDcN5NvtiZi4FRPzRYWSh.jpg", releaseDate: "2024-02-14", voteAverage: 5.5, genreIds: [28, 14, 53] },
+];
+
+const genres = [
+  { id: 28, name: 'Action' },
+  { id: 12, name: 'Adventure' },
+  { id: 16, name: 'Animation' },
+  { id: 35, name: 'Comedy' },
+  { id: 80, name: 'Crime' },
+  { id: 18, name: 'Drama' },
+  { id: 14, name: 'Fantasy' },
+  { id: 27, name: 'Horror' },
+  { id: 10749, name: 'Romance' },
+  { id: 878, name: 'Sci-Fi' },
+  { id: 53, name: 'Thriller' },
+];
+
+const years = Array.from({ length: 30 }, (_, i) => 2024 - i);
+---
+
+<MainLayout title="Semua Film - ASTRO" description="Jelajahi koleksi film terlengkap">
+  <div class="container-custom py-8">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl md:text-4xl font-display font-bold text-white mb-2">
+        🎬 Semua Film
+      </h1>
+      <p class="text-secondary-400">Temukan film favoritmu dari berbagai genre</p>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Filters Sidebar -->
+      <aside class="lg:w-64 flex-shrink-0">
+        <div class="card p-6 sticky top-24 space-y-6">
+          <h2 class="text-lg font-semibold text-white">Filter</h2>
+
+          <!-- Genre Filter -->
+          <div>
+            <label class="block text-sm font-medium text-secondary-300 mb-3">Genre</label>
+            <div class="space-y-2 max-h-48 overflow-auto hide-scrollbar">
+              {genres.map((genre) => (
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    name="genre" 
+                    value={genre.id}
+                    class="w-4 h-4 rounded bg-dark-300 border-dark-100 text-primary-500 focus:ring-primary-500 focus:ring-offset-dark-500"
+                  />
+                  <span class="text-secondary-400 text-sm hover:text-white transition-colors">
+                    {genre.name}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <!-- Year Filter -->
+          <div>
+            <label class="block text-sm font-medium text-secondary-300 mb-3">Tahun</label>
+            <select class="input text-sm">
+              <option value="">Semua Tahun</option>
+              {years.map((year) => (
+                <option value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+
+          <!-- Rating Filter -->
+          <div>
+            <label class="block text-sm font-medium text-secondary-300 mb-3">Rating Minimal</label>
+            <input 
+              type="range" 
+              min="0" 
+              max="10" 
+              step="0.5" 
+              value="0"
+              class="w-full accent-primary-500"
+            />
+            <div class="flex justify-between text-xs text-secondary-500 mt-1">
+              <span>0</span>
+              <span id="rating-value">Semua</span>
+              <span>10</span>
+            </div>
+          </div>
+
+          <!-- Sort -->
+          <div>
+            <label class="block text-sm font-medium text-secondary-300 mb-3">Urutkan</label>
+            <select class="input text-sm">
+              <option value="popularity.desc">Paling Populer</option>
+              <option value="release_date.desc">Terbaru</option>
+              <option value="vote_average.desc">Rating Tertinggi</option>
+              <option value="title.asc">A-Z</option>
+            </select>
+          </div>
+
+          <!-- Apply Button -->
+          <button class="btn-primary w-full">
+            Terapkan Filter
+          </button>
+          <button class="btn-ghost w-full text-sm">
+            Reset Filter
+          </button>
+        </div>
+      </aside>
+
+      <!-- Movies Grid -->
+      <main class="flex-1">
+        <!-- Results Info -->
+        <div class="flex items-center justify-between mb-6">
+          <p class="text-secondary-400">
+            Menampilkan <span class="text-white font-medium">16</span> dari <span class="text-white font-medium">10,000+</span> film
+          </p>
+          <div class="flex items-center gap-2">
+            <button class="p-2 rounded-lg bg-dark-300 text-white" title="Grid view">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+              </svg>
+            </button>
+            <button class="p-2 rounded-lg bg-dark-200 text-secondary-400 hover:text-white transition-colors" title="List view">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Movies Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+          {movies.map((movie) => (
+            <MovieCard 
+              id={movie.id}
+              title={movie.title}
+              posterPath={movie.posterPath}
+              releaseDate={movie.releaseDate}
+              voteAverage={movie.voteAverage}
+              genreIds={movie.genreIds}
+            />
+          ))}
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex items-center justify-center gap-2 mt-12">
+          <button class="btn-icon opacity-50 cursor-not-allowed" disabled>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          <button class="w-10 h-10 rounded-lg bg-primary-500 text-white font-medium">1</button>
+          <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-400 hover:text-white hover:bg-dark-200 transition-colors">2</button>
+          <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-400 hover:text-white hover:bg-dark-200 transition-colors">3</button>
+          <span class="text-secondary-500 px-2">...</span>
+          <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-400 hover:text-white hover:bg-dark-200 transition-colors">50</button>
+          <button class="btn-icon">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </main>
+    </div>
+  </div>
+</MainLayout>

@@ -1,0 +1,165 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import MovieCard from '../components/MovieCard.astro';
+
+const query = Astro.url.searchParams.get('q') || '';
+const type = Astro.url.searchParams.get('type') || 'all';
+
+// Mock search results - in production would come from TMDB API
+const searchResults = [
+  { id: 101, title: "Dune: Part Two", posterPath: "/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg", releaseDate: "2024-02-28", voteAverage: 8.4, mediaType: "movie" },
+  { id: 102, title: "Dune", posterPath: "/d5NXSklXo0qyIYkgV94XAgMIckC.jpg", releaseDate: "2021-09-15", voteAverage: 8.0, mediaType: "movie" },
+  { id: 103, title: "Kung Fu Panda 4", posterPath: "/kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg", releaseDate: "2024-03-08", voteAverage: 7.1, mediaType: "movie" },
+  { id: 104, title: "Oppenheimer", posterPath: "/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg", releaseDate: "2023-07-19", voteAverage: 8.1, mediaType: "movie" },
+  { id: 105, title: "The Last of Us", posterPath: "/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg", releaseDate: "2023-01-15", voteAverage: 8.8, mediaType: "tv" },
+  { id: 106, title: "House of the Dragon", posterPath: "/z2yahl2uefxDCl0nogcRBstwruJ.jpg", releaseDate: "2022-08-21", voteAverage: 8.4, mediaType: "tv" },
+  { id: 107, title: "Suzume", posterPath: "/vIeu8WysZrTSFb2uhPViKjX9EcC.jpg", releaseDate: "2022-11-11", voteAverage: 8.0, mediaType: "anime" },
+  { id: 108, title: "Your Name", posterPath: "/q719jXXEzOoYaps6babgKnONONX.jpg", releaseDate: "2016-08-26", voteAverage: 8.5, mediaType: "anime" },
+];
+
+const filters = [
+  { label: "Semua", value: "all", count: 8 },
+  { label: "Film", value: "movie", count: 4 },
+  { label: "Series", value: "tv", count: 2 },
+  { label: "Anime", value: "anime", count: 2 },
+];
+
+const filteredResults = type === 'all' 
+  ? searchResults 
+  : searchResults.filter(r => r.mediaType === type);
+---
+
+<MainLayout title={`Hasil Pencarian: ${query} - ASTRO`} description={`Hasil pencarian untuk "${query}"`}>
+  <div class="container-custom py-8">
+    <!-- Search Header -->
+    <section class="mb-8">
+      <div class="card p-6">
+        <form action="/cari" method="GET" class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1 relative">
+            <input 
+              type="search" 
+              name="q"
+              value={query}
+              placeholder="Cari film, anime, atau series..." 
+              class="input w-full pl-12 text-lg"
+            />
+            <svg class="w-6 h-6 text-secondary-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+          <button type="submit" class="btn-primary px-8">
+            Cari
+          </button>
+        </form>
+      </div>
+    </section>
+
+    {query ? (
+      <>
+        <!-- Results Info -->
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 class="text-2xl font-bold text-white">Hasil Pencarian: "{query}"</h1>
+            <p class="text-secondary-400">Ditemukan {filteredResults.length} hasil</p>
+          </div>
+          <select class="input w-48 text-sm">
+            <option value="relevance">Paling Relevan</option>
+            <option value="rating">Rating Tertinggi</option>
+            <option value="newest">Terbaru</option>
+            <option value="oldest">Terlama</option>
+          </select>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex gap-2 mb-8 overflow-x-auto pb-2">
+          {filters.map((filter) => (
+            <a 
+              href={`/cari?q=${encodeURIComponent(query)}&type=${filter.value}`}
+              class={`px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
+                type === filter.value 
+                  ? 'bg-primary-500 text-white' 
+                  : 'bg-dark-300 text-secondary-300 hover:bg-dark-200'
+              }`}
+            >
+              {filter.label}
+              <span class={`ml-2 text-xs ${type === filter.value ? 'text-white/70' : 'text-secondary-500'}`}>
+                ({filter.count})
+              </span>
+            </a>
+          ))}
+        </div>
+
+        <!-- Results Grid -->
+        {filteredResults.length > 0 ? (
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            {filteredResults.map((result) => (
+              <div class="relative">
+                <MovieCard 
+                  id={result.id}
+                  title={result.title}
+                  posterPath={result.posterPath}
+                  releaseDate={result.releaseDate}
+                  voteAverage={result.voteAverage}
+                />
+                <span class={`absolute top-2 left-2 badge text-xs ${
+                  result.mediaType === 'movie' 
+                    ? 'badge-primary' 
+                    : result.mediaType === 'tv' 
+                      ? 'badge-violet' 
+                      : 'badge-magenta'
+                }`}>
+                  {result.mediaType === 'movie' ? 'Film' : result.mediaType === 'tv' ? 'Series' : 'Anime'}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div class="text-center py-16">
+            <div class="text-6xl mb-4">🔍</div>
+            <h2 class="text-xl font-bold text-white mb-2">Tidak Ada Hasil</h2>
+            <p class="text-secondary-400 mb-6">Coba kata kunci yang berbeda atau filter yang lain</p>
+          </div>
+        )}
+
+        <!-- Pagination -->
+        {filteredResults.length > 0 && (
+          <div class="flex items-center justify-center gap-2 mt-12">
+            <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-400 hover:bg-dark-200 transition-colors" disabled>
+              <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+            </button>
+            <button class="w-10 h-10 rounded-lg bg-primary-500 text-white">1</button>
+            <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">2</button>
+            <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">3</button>
+            <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">
+              <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+        )}
+      </>
+    ) : (
+      <!-- Empty State -->
+      <div class="text-center py-16">
+        <div class="text-6xl mb-4">🎬</div>
+        <h2 class="text-xl font-bold text-white mb-2">Cari Film, Anime, atau Series</h2>
+        <p class="text-secondary-400 mb-8">Masukkan kata kunci untuk memulai pencarian</p>
+        
+        <!-- Popular Searches -->
+        <div class="max-w-md mx-auto">
+          <h3 class="text-sm text-secondary-400 mb-3">Pencarian Populer:</h3>
+          <div class="flex flex-wrap justify-center gap-2">
+            <a href="/cari?q=dune" class="badge bg-dark-300 hover:bg-dark-200 transition-colors">Dune</a>
+            <a href="/cari?q=oppenheimer" class="badge bg-dark-300 hover:bg-dark-200 transition-colors">Oppenheimer</a>
+            <a href="/cari?q=one+piece" class="badge bg-dark-300 hover:bg-dark-200 transition-colors">One Piece</a>
+            <a href="/cari?q=demon+slayer" class="badge bg-dark-300 hover:bg-dark-200 transition-colors">Demon Slayer</a>
+            <a href="/cari?q=the+last+of+us" class="badge bg-dark-300 hover:bg-dark-200 transition-colors">The Last of Us</a>
+            <a href="/cari?q=breaking+bad" class="badge bg-dark-300 hover:bg-dark-200 transition-colors">Breaking Bad</a>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+</MainLayout>

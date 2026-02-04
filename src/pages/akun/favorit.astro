@@ -1,0 +1,150 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import MovieCard from '../../components/MovieCard.astro';
+
+const favoriteMovies = [
+  { id: 201, title: "Oppenheimer", posterPath: "/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg", releaseDate: "2023-07-19", voteAverage: 8.1, addedDate: "2024-03-10" },
+  { id: 202, title: "The Dark Knight", posterPath: "/qJ2tW6WMUDux911r6m7haRef0WH.jpg", releaseDate: "2008-07-16", voteAverage: 9.1, addedDate: "2024-03-05" },
+  { id: 203, title: "Interstellar", posterPath: "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg", releaseDate: "2014-11-05", voteAverage: 8.6, addedDate: "2024-02-28" },
+  { id: 204, title: "Inception", posterPath: "/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg", releaseDate: "2010-07-15", voteAverage: 8.7, addedDate: "2024-02-20" },
+  { id: 205, title: "Spirited Away", posterPath: "/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg", releaseDate: "2001-07-20", voteAverage: 8.9, addedDate: "2024-02-15" },
+  { id: 206, title: "Parasite", posterPath: "/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg", releaseDate: "2019-05-30", voteAverage: 8.9, addedDate: "2024-02-10" },
+  { id: 207, title: "Your Name", posterPath: "/q719jXXEzOoYaps6babgKnONONX.jpg", releaseDate: "2016-08-26", voteAverage: 8.5, addedDate: "2024-02-05" },
+  { id: 208, title: "The Shawshank Redemption", posterPath: "/lyQBXzOQSuE59IsHyhrp0qIiPAz.jpg", releaseDate: "1994-09-23", voteAverage: 9.3, addedDate: "2024-01-28" },
+  { id: 209, title: "Pulp Fiction", posterPath: "/fIE3lAGcZDV1G6XM5KmuWnNsPp1.jpg", releaseDate: "1994-09-10", voteAverage: 8.8, addedDate: "2024-01-20" },
+  { id: 210, title: "The Matrix", posterPath: "/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg", releaseDate: "1999-03-30", voteAverage: 8.7, addedDate: "2024-01-15" },
+  { id: 211, title: "Fight Club", posterPath: "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg", releaseDate: "1999-10-15", voteAverage: 8.6, addedDate: "2024-01-10" },
+  { id: 212, title: "Forrest Gump", posterPath: "/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg", releaseDate: "1994-06-23", voteAverage: 8.8, addedDate: "2024-01-05" },
+];
+
+const genres = [
+  { name: "Semua", count: 67, active: true },
+  { name: "Action", count: 18, active: false },
+  { name: "Drama", count: 15, active: false },
+  { name: "Sci-Fi", count: 12, active: false },
+  { name: "Animation", count: 10, active: false },
+  { name: "Thriller", count: 8, active: false },
+  { name: "Comedy", count: 4, active: false },
+];
+---
+
+<MainLayout title="Film Favorit - ASTRO" description="Koleksi film favorit saya">
+  <div class="container-custom py-8">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+      <div>
+        <nav class="flex items-center gap-2 text-sm text-secondary-400 mb-2">
+          <a href="/akun" class="hover:text-primary-400 transition-colors">Akun</a>
+          <span>/</span>
+          <span class="text-white">Favorit</span>
+        </nav>
+        <h1 class="text-3xl font-bold text-white">❤️ Film Favorit</h1>
+        <p class="text-secondary-400 mt-1">Koleksi film favorit kamu</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <select class="input w-48 text-sm">
+          <option value="added">Ditambahkan Terbaru</option>
+          <option value="rating">Rating Tertinggi</option>
+          <option value="release">Tanggal Rilis</option>
+          <option value="title">Judul A-Z</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Genre Filter -->
+    <div class="mb-8">
+      <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
+        {genres.map((genre) => (
+          <button 
+            class={`px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
+              genre.active 
+                ? 'bg-red-500 text-white' 
+                : 'bg-dark-300 text-secondary-300 hover:bg-dark-200'
+            }`}
+          >
+            {genre.name}
+            <span class={`ml-2 text-xs ${genre.active ? 'text-white/70' : 'text-secondary-500'}`}>
+              ({genre.count})
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="card p-4 text-center">
+        <div class="text-2xl font-bold text-gradient">67</div>
+        <div class="text-secondary-400 text-sm">Total Favorit</div>
+      </div>
+      <div class="card p-4 text-center">
+        <div class="text-2xl font-bold text-gradient-accent">8.5</div>
+        <div class="text-secondary-400 text-sm">Rating Rata-rata</div>
+      </div>
+      <div class="card p-4 text-center">
+        <div class="text-2xl font-bold text-gradient">Action</div>
+        <div class="text-secondary-400 text-sm">Genre Favorit</div>
+      </div>
+      <div class="card p-4 text-center">
+        <div class="text-2xl font-bold text-gradient-accent">134</div>
+        <div class="text-secondary-400 text-sm">Jam Menonton</div>
+      </div>
+    </div>
+
+    <!-- Movies Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+      {favoriteMovies.map((movie) => (
+        <div class="group relative">
+          <!-- Heart Icon -->
+          <button class="absolute top-2 right-2 z-10 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+            </svg>
+          </button>
+          
+          <MovieCard 
+            id={movie.id}
+            title={movie.title}
+            posterPath={movie.posterPath}
+            releaseDate={movie.releaseDate}
+            voteAverage={movie.voteAverage}
+          />
+          
+          <!-- Added Date -->
+          <div class="mt-2 text-center">
+            <span class="text-secondary-500 text-xs">
+              Difavoritkan: {new Date(movie.addedDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex items-center justify-center gap-2 mt-12">
+      <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-400 hover:bg-dark-200 transition-colors" disabled>
+        <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+      <button class="w-10 h-10 rounded-lg bg-primary-500 text-white">1</button>
+      <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">2</button>
+      <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">3</button>
+      <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">
+        <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Empty State (hidden by default) -->
+    <div class="hidden text-center py-16">
+      <div class="text-6xl mb-4">💔</div>
+      <h2 class="text-xl font-bold text-white mb-2">Belum Ada Favorit</h2>
+      <p class="text-secondary-400 mb-6">Kamu belum memiliki film favorit</p>
+      <a href="/jelajahi" class="btn-primary">
+        Jelajahi Film
+      </a>
+    </div>
+  </div>
+</MainLayout>

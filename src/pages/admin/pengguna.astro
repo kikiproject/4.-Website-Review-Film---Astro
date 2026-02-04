@@ -1,0 +1,283 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const users = [
+  { id: 1, name: "Ahmad Rizky", email: "ahmad@example.com", role: "user", status: "active", joined: "2024-01-15", reviews: 12, avatar: "https://ui-avatars.com/api/?name=Ahmad+Rizky&background=1A2DE7&color=fff" },
+  { id: 2, name: "Sarah Putri", email: "sarah@example.com", role: "moderator", status: "active", joined: "2023-11-20", reviews: 45, avatar: "https://ui-avatars.com/api/?name=Sarah+Putri&background=8F29BC&color=fff" },
+  { id: 3, name: "Budi Santoso", email: "budi@example.com", role: "user", status: "suspended", joined: "2023-12-05", reviews: 8, avatar: "https://ui-avatars.com/api/?name=Budi+Santoso&background=F062C8&color=fff" },
+  { id: 4, name: "Dewi Lestari", email: "dewi@example.com", role: "admin", status: "active", joined: "2023-06-10", reviews: 78, avatar: "https://ui-avatars.com/api/?name=Dewi+Lestari&background=5B78B0&color=fff" },
+  { id: 5, name: "Eko Prasetyo", email: "eko@example.com", role: "user", status: "active", joined: "2024-02-01", reviews: 3, avatar: "https://ui-avatars.com/api/?name=Eko+Prasetyo&background=1A2DE7&color=fff" },
+  { id: 6, name: "Fitri Handayani", email: "fitri@example.com", role: "user", status: "banned", joined: "2023-08-15", reviews: 0, avatar: "https://ui-avatars.com/api/?name=Fitri+Handayani&background=8F29BC&color=fff" },
+  { id: 7, name: "Gunawan Wibowo", email: "gunawan@example.com", role: "moderator", status: "active", joined: "2023-09-22", reviews: 56, avatar: "https://ui-avatars.com/api/?name=Gunawan+Wibowo&background=F062C8&color=fff" },
+  { id: 8, name: "Hana Safira", email: "hana@example.com", role: "user", status: "active", joined: "2024-03-01", reviews: 5, avatar: "https://ui-avatars.com/api/?name=Hana+Safira&background=5B78B0&color=fff" },
+];
+
+const roleColors: Record<string, string> = {
+  admin: "bg-red-500/20 text-red-400 border-red-500/30",
+  moderator: "bg-violet-500/20 text-violet-400 border-violet-500/30",
+  user: "bg-primary-500/20 text-primary-400 border-primary-500/30",
+};
+
+const statusColors: Record<string, string> = {
+  active: "bg-green-500/20 text-green-400",
+  suspended: "bg-yellow-500/20 text-yellow-400",
+  banned: "bg-red-500/20 text-red-400",
+};
+---
+
+<BaseLayout title="Kelola Pengguna - Admin ASTRO">
+  <div class="flex h-screen bg-dark-500">
+    <!-- Sidebar (same as index) -->
+    <aside class="w-64 bg-dark-400 border-r border-dark-200 flex flex-col">
+      <div class="p-6 border-b border-dark-200">
+        <a href="/admin" class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-violet-500 rounded-xl flex items-center justify-center">
+            <span class="text-xl">🎬</span>
+          </div>
+          <div>
+            <span class="font-display font-bold text-xl text-white">ASTRO</span>
+            <span class="text-xs text-secondary-400 block">Admin Panel</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="flex-1 p-4 space-y-1">
+        <a href="/admin" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
+          </svg>
+          Dashboard
+        </a>
+        <a href="/admin/pengguna" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary-500/10 text-primary-400 border-l-2 border-primary-500">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+          </svg>
+          Kelola Pengguna
+        </a>
+        <a href="/admin/review" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+          </svg>
+          Moderasi Review
+        </a>
+        <a href="/admin/film" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"></path>
+          </svg>
+          Kelola Film
+        </a>
+        <a href="/admin/statistik" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+          Statistik
+        </a>
+        <a href="/admin/laporan" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+          Laporan
+        </a>
+      </nav>
+
+      <div class="p-4 border-t border-dark-200">
+        <div class="flex items-center gap-3">
+          <img 
+            src="https://ui-avatars.com/api/?name=Admin&background=1A2DE7&color=fff"
+            alt="Admin"
+            class="w-10 h-10 rounded-full"
+          />
+          <div class="flex-1 min-w-0">
+            <p class="text-white font-medium text-sm truncate">Super Admin</p>
+            <p class="text-secondary-400 text-xs truncate">admin@astro.id</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-auto">
+      <header class="sticky top-0 z-10 bg-dark-500/95 backdrop-blur-md border-b border-dark-200 px-8 py-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-bold text-white">Kelola Pengguna</h1>
+            <p class="text-secondary-400 text-sm">Kelola semua pengguna terdaftar</p>
+          </div>
+          <button class="btn-primary">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Tambah Pengguna
+          </button>
+        </div>
+      </header>
+
+      <div class="p-8">
+        <!-- Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div class="card p-4 flex items-center gap-4">
+            <div class="w-12 h-12 bg-primary-500/20 rounded-xl flex items-center justify-center">
+              <span class="text-2xl">👥</span>
+            </div>
+            <div>
+              <div class="text-2xl font-bold text-white">12,458</div>
+              <div class="text-secondary-400 text-sm">Total Pengguna</div>
+            </div>
+          </div>
+          <div class="card p-4 flex items-center gap-4">
+            <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
+              <span class="text-2xl">✅</span>
+            </div>
+            <div>
+              <div class="text-2xl font-bold text-white">11,892</div>
+              <div class="text-secondary-400 text-sm">Aktif</div>
+            </div>
+          </div>
+          <div class="card p-4 flex items-center gap-4">
+            <div class="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center">
+              <span class="text-2xl">⏸️</span>
+            </div>
+            <div>
+              <div class="text-2xl font-bold text-white">342</div>
+              <div class="text-secondary-400 text-sm">Ditangguhkan</div>
+            </div>
+          </div>
+          <div class="card p-4 flex items-center gap-4">
+            <div class="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center">
+              <span class="text-2xl">🚫</span>
+            </div>
+            <div>
+              <div class="text-2xl font-bold text-white">224</div>
+              <div class="text-secondary-400 text-sm">Diblokir</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="card p-4 mb-6">
+          <div class="flex flex-col lg:flex-row gap-4 items-center justify-between">
+            <div class="flex flex-wrap gap-2">
+              <select class="input w-40 text-sm">
+                <option value="">Semua Role</option>
+                <option value="admin">Admin</option>
+                <option value="moderator">Moderator</option>
+                <option value="user">User</option>
+              </select>
+              <select class="input w-40 text-sm">
+                <option value="">Semua Status</option>
+                <option value="active">Aktif</option>
+                <option value="suspended">Ditangguhkan</option>
+                <option value="banned">Diblokir</option>
+              </select>
+              <input type="date" class="input w-40 text-sm" />
+            </div>
+            <div class="relative w-full lg:w-auto">
+              <input 
+                type="search" 
+                placeholder="Cari pengguna..." 
+                class="input w-full lg:w-64 pl-10"
+              />
+              <svg class="w-5 h-5 text-secondary-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="card overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-dark-300">
+                <tr>
+                  <th class="text-left p-4 text-secondary-300 font-medium text-sm">
+                    <input type="checkbox" class="form-checkbox rounded bg-dark-400 border-dark-100 text-primary-500" />
+                  </th>
+                  <th class="text-left p-4 text-secondary-300 font-medium text-sm">Pengguna</th>
+                  <th class="text-left p-4 text-secondary-300 font-medium text-sm">Role</th>
+                  <th class="text-left p-4 text-secondary-300 font-medium text-sm">Status</th>
+                  <th class="text-left p-4 text-secondary-300 font-medium text-sm">Bergabung</th>
+                  <th class="text-left p-4 text-secondary-300 font-medium text-sm">Review</th>
+                  <th class="text-right p-4 text-secondary-300 font-medium text-sm">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr class="border-t border-dark-200 hover:bg-dark-300/50 transition-colors">
+                    <td class="p-4">
+                      <input type="checkbox" class="form-checkbox rounded bg-dark-400 border-dark-100 text-primary-500" />
+                    </td>
+                    <td class="p-4">
+                      <div class="flex items-center gap-3">
+                        <img src={user.avatar} alt={user.name} class="w-10 h-10 rounded-full" />
+                        <div>
+                          <h3 class="text-white font-medium">{user.name}</h3>
+                          <p class="text-secondary-400 text-sm">{user.email}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="p-4">
+                      <span class={`badge border ${roleColors[user.role]}`}>
+                        {user.role}
+                      </span>
+                    </td>
+                    <td class="p-4">
+                      <span class={`badge ${statusColors[user.status]}`}>
+                        {user.status === 'active' ? 'Aktif' : user.status === 'suspended' ? 'Ditangguhkan' : 'Diblokir'}
+                      </span>
+                    </td>
+                    <td class="p-4 text-secondary-400 text-sm">
+                      {new Date(user.joined).toLocaleDateString('id-ID')}
+                    </td>
+                    <td class="p-4 text-white">{user.reviews}</td>
+                    <td class="p-4">
+                      <div class="flex items-center justify-end gap-2">
+                        <button class="p-2 bg-dark-300 rounded-lg text-secondary-400 hover:text-primary-400 transition-colors" title="Edit">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                          </svg>
+                        </button>
+                        <button class="p-2 bg-dark-300 rounded-lg text-secondary-400 hover:text-yellow-400 transition-colors" title="Tangguhkan">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+                          </svg>
+                        </button>
+                        <button class="p-2 bg-dark-300 rounded-lg text-secondary-400 hover:text-red-400 transition-colors" title="Hapus">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="p-4 border-t border-dark-200 flex items-center justify-between">
+            <p class="text-secondary-400 text-sm">Menampilkan 1-8 dari 12,458 pengguna</p>
+            <div class="flex items-center gap-2">
+              <button class="w-8 h-8 rounded-lg bg-dark-300 text-secondary-400 hover:bg-dark-200 transition-colors" disabled>
+                <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+              </button>
+              <button class="w-8 h-8 rounded-lg bg-primary-500 text-white text-sm">1</button>
+              <button class="w-8 h-8 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors text-sm">2</button>
+              <button class="w-8 h-8 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors text-sm">3</button>
+              <span class="text-secondary-500">...</span>
+              <button class="w-8 h-8 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors text-sm">1558</button>
+              <button class="w-8 h-8 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">
+                <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</BaseLayout>

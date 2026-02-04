@@ -1,0 +1,283 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import MovieCard from '../components/MovieCard.astro';
+
+const topRatedMovies = [
+  { id: 801, title: "The Shawshank Redemption", posterPath: "/lyQBXzOQSuE59IsHyhrp0qIiPAz.jpg", releaseDate: "1994-09-23", voteAverage: 9.3, voteCount: 26845 },
+  { id: 802, title: "The Godfather", posterPath: "/3bhkrj58Vtu7enYsRolD1fZdja1.jpg", releaseDate: "1972-03-14", voteAverage: 9.2, voteCount: 19234 },
+  { id: 803, title: "The Dark Knight", posterPath: "/qJ2tW6WMUDux911r6m7haRef0WH.jpg", releaseDate: "2008-07-16", voteAverage: 9.1, voteCount: 32456 },
+  { id: 804, title: "Schindler's List", posterPath: "/sF1U4EUQS8YHUYjNl3pMGNIQyr0.jpg", releaseDate: "1993-12-15", voteAverage: 9.0, voteCount: 15678 },
+  { id: 805, title: "Spirited Away", posterPath: "/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg", releaseDate: "2001-07-20", voteAverage: 8.9, voteCount: 14523 },
+  { id: 806, title: "Parasite", posterPath: "/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg", releaseDate: "2019-05-30", voteAverage: 8.9, voteCount: 17892 },
+  { id: 807, title: "Pulp Fiction", posterPath: "/fIE3lAGcZDV1G6XM5KmuWnNsPp1.jpg", releaseDate: "1994-09-10", voteAverage: 8.8, voteCount: 25678 },
+  { id: 808, title: "Forrest Gump", posterPath: "/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg", releaseDate: "1994-06-23", voteAverage: 8.8, voteCount: 26234 },
+  { id: 809, title: "Inception", posterPath: "/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg", releaseDate: "2010-07-15", voteAverage: 8.7, voteCount: 35678 },
+  { id: 810, title: "The Matrix", posterPath: "/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg", releaseDate: "1999-03-30", voteAverage: 8.7, voteCount: 24123 },
+  { id: 811, title: "Interstellar", posterPath: "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg", releaseDate: "2014-11-05", voteAverage: 8.6, voteCount: 33456 },
+  { id: 812, title: "Fight Club", posterPath: "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg", releaseDate: "1999-10-15", voteAverage: 8.6, voteCount: 28934 },
+];
+
+const decades = ['2020s', '2010s', '2000s', '1990s', '1980s', '1970s', 'Klasik'];
+const genres = ['Semua', 'Action', 'Drama', 'Comedy', 'Thriller', 'Sci-Fi', 'Horror', 'Animation'];
+---
+
+<MainLayout title="Top Rated - ASTRO" description="Film dengan rating tertinggi sepanjang masa">
+  <!-- Hero Section -->
+  <div class="relative h-[50vh] overflow-hidden">
+    <img 
+      src="https://image.tmdb.org/t/p/original/kXfqcdQKsToO0OUXHcrrNCHDBzO.jpg" 
+      alt="Top Rated"
+      class="w-full h-full object-cover"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-dark-500 via-dark-500/70 to-transparent"></div>
+    <div class="absolute inset-0 flex items-center justify-center text-center">
+      <div>
+        <span class="badge bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 mb-4">
+          ⭐ TOP RATED
+        </span>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4">
+          Film Terbaik Sepanjang Masa
+        </h1>
+        <p class="text-xl text-secondary-300 max-w-2xl mx-auto">
+          Koleksi film dengan rating tertinggi dari kritikus dan penonton
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-custom py-8">
+    <!-- Filter Section -->
+    <section class="mb-8 -mt-16 relative z-10">
+      <div class="card p-6">
+        <div class="flex flex-col lg:flex-row gap-6">
+          <!-- Decade Filter -->
+          <div class="flex-1">
+            <label class="text-sm text-secondary-400 mb-2 block">Dekade</label>
+            <div class="flex flex-wrap gap-2">
+              {decades.map((decade, index) => (
+                <button 
+                  class={`px-4 py-2 rounded-lg transition-all ${
+                    index === 0 
+                      ? 'bg-primary-500 text-white' 
+                      : 'bg-dark-300 text-secondary-300 hover:bg-dark-200'
+                  }`}
+                >
+                  {decade}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <!-- Genre Filter -->
+          <div class="flex-1">
+            <label class="text-sm text-secondary-400 mb-2 block">Genre</label>
+            <div class="flex flex-wrap gap-2">
+              {genres.slice(0, 5).map((genre, index) => (
+                <button 
+                  class={`px-4 py-2 rounded-lg transition-all ${
+                    index === 0 
+                      ? 'bg-violet-500 text-white' 
+                      : 'bg-dark-300 text-secondary-300 hover:bg-dark-200'
+                  }`}
+                >
+                  {genre}
+                </button>
+              ))}
+              <button class="px-4 py-2 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-all">
+                +{genres.length - 5} lagi
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="mb-12">
+      <div class="flex flex-wrap items-center justify-between gap-4 p-4 bg-dark-400/50 rounded-xl">
+        <div class="flex items-center gap-6">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-gradient">250</div>
+            <div class="text-secondary-500 text-xs">Film Terbaik</div>
+          </div>
+          <div class="w-px h-10 bg-dark-200"></div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-gradient-accent">9.3</div>
+            <div class="text-secondary-500 text-xs">Rating Tertinggi</div>
+          </div>
+          <div class="w-px h-10 bg-dark-200"></div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-gradient">1994</div>
+            <div class="text-secondary-500 text-xs">Tahun Terbaik</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-secondary-400 text-sm">Urutkan:</span>
+          <select class="input w-48 text-sm">
+            <option value="rating">Rating Tertinggi</option>
+            <option value="votes">Review Terbanyak</option>
+            <option value="newest">Terbaru</option>
+            <option value="oldest">Terlama</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top 3 Showcase -->
+    <section class="mb-12">
+      <h2 class="text-xl font-bold text-white mb-6">🏆 Top 3 Film Terbaik</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {topRatedMovies.slice(0, 3).map((movie, index) => (
+          <div class="relative group">
+            <!-- Medal -->
+            <div class={`absolute -top-3 -left-3 w-12 h-12 rounded-full flex items-center justify-center z-10 text-2xl ${
+              index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : 'bg-amber-700'
+            }`}>
+              {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+            </div>
+            
+            <div class="card overflow-hidden">
+              <div class="aspect-[2/3] overflow-hidden">
+                <img 
+                  src={`https://image.tmdb.org/t/p/w500${movie.posterPath}`}
+                  alt={movie.title}
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <div class="p-4">
+                <h3 class="text-lg font-bold text-white mb-2 group-hover:text-primary-400 transition-colors">
+                  {movie.title}
+                </h3>
+                <p class="text-secondary-400 text-sm mb-3">{movie.releaseDate.split('-')[0]}</p>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="text-yellow-400 text-xl">⭐</span>
+                    <span class="text-white font-bold text-xl">{movie.voteAverage.toFixed(1)}</span>
+                    <span class="text-secondary-500 text-sm">/10</span>
+                  </div>
+                  <span class="text-secondary-500 text-sm">
+                    {(movie.voteCount / 1000).toFixed(1)}K votes
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Full List -->
+    <section>
+      <h2 class="text-xl font-bold text-white mb-6">📋 Daftar Lengkap</h2>
+      
+      <!-- Table View for Desktop -->
+      <div class="hidden lg:block">
+        <div class="card overflow-hidden">
+          <table class="w-full">
+            <thead class="bg-dark-300">
+              <tr>
+                <th class="text-left p-4 text-secondary-300 font-medium">#</th>
+                <th class="text-left p-4 text-secondary-300 font-medium">Film</th>
+                <th class="text-left p-4 text-secondary-300 font-medium">Tahun</th>
+                <th class="text-left p-4 text-secondary-300 font-medium">Rating</th>
+                <th class="text-left p-4 text-secondary-300 font-medium">Votes</th>
+                <th class="text-right p-4 text-secondary-300 font-medium">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {topRatedMovies.map((movie, index) => (
+                <tr class="border-t border-dark-300 hover:bg-dark-300/50 transition-colors">
+                  <td class="p-4">
+                    <span class={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+                      index < 3 ? 'bg-primary-500 text-white' : 'bg-dark-300 text-secondary-400'
+                    }`}>
+                      {index + 1}
+                    </span>
+                  </td>
+                  <td class="p-4">
+                    <div class="flex items-center gap-4">
+                      <img 
+                        src={`https://image.tmdb.org/t/p/w92${movie.posterPath}`}
+                        alt={movie.title}
+                        class="w-12 h-18 object-cover rounded"
+                      />
+                      <div>
+                        <h3 class="text-white font-medium hover:text-primary-400 transition-colors">
+                          <a href={`/film/${movie.id}`}>{movie.title}</a>
+                        </h3>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="p-4 text-secondary-400">{movie.releaseDate.split('-')[0]}</td>
+                  <td class="p-4">
+                    <div class="flex items-center gap-1">
+                      <span class="text-yellow-400">⭐</span>
+                      <span class="text-white font-bold">{movie.voteAverage.toFixed(1)}</span>
+                    </div>
+                  </td>
+                  <td class="p-4 text-secondary-400">{movie.voteCount.toLocaleString()}</td>
+                  <td class="p-4 text-right">
+                    <div class="flex items-center justify-end gap-2">
+                      <button class="p-2 bg-dark-300 rounded-lg text-secondary-400 hover:text-primary-400 transition-colors" title="Tambah ke Watchlist">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                        </svg>
+                      </button>
+                      <button class="p-2 bg-dark-300 rounded-lg text-secondary-400 hover:text-red-400 transition-colors" title="Tambah ke Favorit">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                      </button>
+                      <a href={`/film/${movie.id}`} class="btn-primary py-2 px-4 text-sm">Detail</a>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Grid View for Mobile -->
+      <div class="lg:hidden grid grid-cols-2 sm:grid-cols-3 gap-4">
+        {topRatedMovies.map((movie, index) => (
+          <div class="relative">
+            <!-- Ranking Badge -->
+            <div class={`absolute -top-2 -left-2 w-8 h-8 rounded-full flex items-center justify-center z-10 text-white font-bold text-sm ${
+              index < 3 ? 'bg-primary-500' : 'bg-dark-300'
+            }`}>
+              {index + 1}
+            </div>
+            
+            <MovieCard 
+              id={movie.id}
+              title={movie.title}
+              posterPath={movie.posterPath}
+              releaseDate={movie.releaseDate}
+              voteAverage={movie.voteAverage}
+            />
+          </div>
+        ))}
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-center gap-2 mt-12">
+        <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-400 hover:bg-dark-200 transition-colors" disabled>
+          <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <button class="w-10 h-10 rounded-lg bg-primary-500 text-white">1</button>
+        <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">2</button>
+        <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">3</button>
+        <span class="text-secondary-500">...</span>
+        <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">21</button>
+        <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">
+          <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </section>
+  </div>
+</MainLayout>

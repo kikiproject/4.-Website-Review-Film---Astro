@@ -1,0 +1,281 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+
+const myReviews = [
+  {
+    id: 1,
+    movie: {
+      id: 101,
+      title: "Dune: Part Two",
+      poster: "/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg",
+      year: 2024,
+    },
+    rating: 9,
+    content: "Film yang luar biasa! Visual yang memukau dan cerita yang mendalam. Denis Villeneuve berhasil mengadaptasi novel Frank Herbert dengan sempurna. Akting Timothée Chalamet dan Zendaya sangat mengesankan. Skor musik Hans Zimmer menambah kedalaman emosional film ini. Wajib ditonton di IMAX untuk pengalaman terbaik!",
+    date: "2024-03-15",
+    likes: 24,
+    comments: 5,
+    status: "published",
+  },
+  {
+    id: 2,
+    movie: {
+      id: 102,
+      title: "Poor Things",
+      poster: "/kCGlIMHnOm8JPXq3rXM6c5wMxcT.jpg",
+      year: 2023,
+    },
+    rating: 8,
+    content: "Emma Stone tampil memukau dalam perannya sebagai Bella Baxter. Film yang unik dan tidak seperti yang lain. Yorgos Lanthimos menciptakan dunia visual yang fantastis dengan cerita yang berani dan provokatif. Cinematography dan set design yang luar biasa!",
+    date: "2024-03-12",
+    likes: 18,
+    comments: 3,
+    status: "published",
+  },
+  {
+    id: 3,
+    movie: {
+      id: 103,
+      title: "Oppenheimer",
+      poster: "/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
+      year: 2023,
+    },
+    rating: 9,
+    content: "Christopher Nolan tidak pernah mengecewakan. Masterpiece sinematik yang menggabungkan sejarah, sains, dan drama politik. Cillian Murphy memberikan penampilan karirnya sebagai J. Robert Oppenheimer. Durasi 3 jam terasa begitu cepat berlalu.",
+    date: "2024-03-05",
+    likes: 42,
+    comments: 8,
+    status: "published",
+  },
+  {
+    id: 4,
+    movie: {
+      id: 104,
+      title: "The Zone of Interest",
+      poster: "/hUu9zyZmDd8VZegKi1iK1Vk0RYS.jpg",
+      year: 2023,
+    },
+    rating: 8,
+    content: "Film yang mengerikan namun penting untuk ditonton. Jonathan Glazer menggunakan pendekatan yang tidak konvensional untuk menggambarkan kengerian Holocaust. Sound design yang memukau menciptakan atmosfer yang sangat tidak nyaman.",
+    date: "2024-02-28",
+    likes: 15,
+    comments: 2,
+    status: "published",
+  },
+  {
+    id: 5,
+    movie: {
+      id: 105,
+      title: "Godzilla x Kong",
+      poster: "/z1p34vh7dEOnLDmyCrlUVLuoDzd.jpg",
+      year: 2024,
+    },
+    rating: 7,
+    content: "Pertarungan monster yang spektakuler! Visual yang mengesankan dan banyak aksi yang memuaskan. Cerita memang tidak terlalu dalam, tapi sebagai film monster, ini sangat menghibur.",
+    date: "2024-03-28",
+    likes: 12,
+    comments: 4,
+    status: "draft",
+  },
+];
+
+const stats = {
+  totalReviews: 45,
+  avgRating: 7.8,
+  totalLikes: 567,
+  totalComments: 89,
+};
+
+const filters = [
+  { label: "Semua", count: 45, active: true },
+  { label: "Dipublikasikan", count: 42, active: false },
+  { label: "Draft", count: 3, active: false },
+];
+---
+
+<MainLayout title="Review Saya - ASTRO" description="Daftar review film yang saya tulis">
+  <div class="container-custom py-8">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+      <div>
+        <nav class="flex items-center gap-2 text-sm text-secondary-400 mb-2">
+          <a href="/akun" class="hover:text-primary-400 transition-colors">Akun</a>
+          <span>/</span>
+          <span class="text-white">Review Saya</span>
+        </nav>
+        <h1 class="text-3xl font-bold text-white">✍️ Review Saya</h1>
+        <p class="text-secondary-400 mt-1">Semua review yang telah kamu tulis</p>
+      </div>
+      <a href="/jelajahi" class="btn-primary">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Tulis Review Baru
+      </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="card p-4 text-center">
+        <div class="text-2xl font-bold text-gradient">{stats.totalReviews}</div>
+        <div class="text-secondary-400 text-sm">Total Review</div>
+      </div>
+      <div class="card p-4 text-center">
+        <div class="text-2xl font-bold text-gradient-accent">{stats.avgRating}</div>
+        <div class="text-secondary-400 text-sm">Rating Rata-rata</div>
+      </div>
+      <div class="card p-4 text-center">
+        <div class="text-2xl font-bold text-gradient">{stats.totalLikes}</div>
+        <div class="text-secondary-400 text-sm">Total Suka</div>
+      </div>
+      <div class="card p-4 text-center">
+        <div class="text-2xl font-bold text-gradient-accent">{stats.totalComments}</div>
+        <div class="text-secondary-400 text-sm">Komentar</div>
+      </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+      <div class="flex gap-2">
+        {filters.map((filter) => (
+          <button 
+            class={`px-4 py-2 rounded-lg transition-all ${
+              filter.active 
+                ? 'bg-primary-500 text-white' 
+                : 'bg-dark-300 text-secondary-300 hover:bg-dark-200'
+            }`}
+          >
+            {filter.label}
+            <span class={`ml-2 text-xs ${filter.active ? 'text-white/70' : 'text-secondary-500'}`}>
+              ({filter.count})
+            </span>
+          </button>
+        ))}
+      </div>
+      <select class="input w-48 text-sm">
+        <option value="newest">Terbaru</option>
+        <option value="oldest">Terlama</option>
+        <option value="rating-high">Rating Tertinggi</option>
+        <option value="rating-low">Rating Terendah</option>
+        <option value="likes">Paling Disukai</option>
+      </select>
+    </div>
+
+    <!-- Reviews List -->
+    <div class="space-y-6">
+      {myReviews.map((review) => (
+        <div class="card p-6">
+          <div class="flex flex-col md:flex-row gap-6">
+            <!-- Movie Poster -->
+            <a href={`/film/${review.movie.id}`} class="flex-shrink-0">
+              <img 
+                src={`https://image.tmdb.org/t/p/w185${review.movie.poster}`}
+                alt={review.movie.title}
+                class="w-28 h-40 object-cover rounded-lg hover:opacity-80 transition-opacity"
+              />
+            </a>
+
+            <!-- Review Content -->
+            <div class="flex-1">
+              <div class="flex flex-wrap items-start justify-between gap-4 mb-3">
+                <div>
+                  <div class="flex items-center gap-3 mb-1">
+                    <a href={`/film/${review.movie.id}`} class="text-xl font-bold text-white hover:text-primary-400 transition-colors">
+                      {review.movie.title}
+                    </a>
+                    <span class="text-secondary-500">({review.movie.year})</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-1">
+                      {[...Array(10)].map((_, i) => (
+                        <svg 
+                          class={`w-4 h-4 ${i < review.rating ? 'text-yellow-400' : 'text-dark-200'}`}
+                          fill="currentColor" 
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                      ))}
+                      <span class="ml-1 text-white font-medium">{review.rating}/10</span>
+                    </div>
+                    {review.status === 'draft' && (
+                      <span class="badge bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+                        Draft
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button class="p-2 bg-dark-300 rounded-lg text-secondary-400 hover:text-primary-400 transition-colors" title="Edit">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                  </button>
+                  <button class="p-2 bg-dark-300 rounded-lg text-secondary-400 hover:text-red-400 transition-colors" title="Hapus">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <p class="text-secondary-300 mb-4">{review.content}</p>
+
+              <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-dark-200">
+                <div class="flex items-center gap-4 text-sm text-secondary-400">
+                  <span>📅 {new Date(review.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                </div>
+                <div class="flex items-center gap-4">
+                  <span class="flex items-center gap-1 text-secondary-400 text-sm">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                    </svg>
+                    {review.likes} suka
+                  </span>
+                  <span class="flex items-center gap-1 text-secondary-400 text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    {review.comments} komentar
+                  </span>
+                  <a href={`/film/${review.movie.id}#review-${review.id}`} class="text-primary-400 hover:text-primary-300 text-sm">
+                    Lihat Review →
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex items-center justify-center gap-2 mt-12">
+      <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-400 hover:bg-dark-200 transition-colors" disabled>
+        <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+      <button class="w-10 h-10 rounded-lg bg-primary-500 text-white">1</button>
+      <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">2</button>
+      <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">3</button>
+      <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">4</button>
+      <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">5</button>
+      <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">
+        <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Empty State (hidden by default) -->
+    <div class="hidden text-center py-16">
+      <div class="text-6xl mb-4">✍️</div>
+      <h2 class="text-xl font-bold text-white mb-2">Belum Ada Review</h2>
+      <p class="text-secondary-400 mb-6">Kamu belum menulis review apapun</p>
+      <a href="/jelajahi" class="btn-primary">
+        Mulai Review Film
+      </a>
+    </div>
+  </div>
+</MainLayout>

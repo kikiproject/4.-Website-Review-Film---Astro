@@ -1,0 +1,255 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import MovieCard from '../components/MovieCard.astro';
+
+const upcomingMovies = [
+  { id: 601, title: "Kingdom of the Planet of the Apes", posterPath: "/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg", releaseDate: "2024-05-10", voteAverage: 0 },
+  { id: 602, title: "Furiosa: A Mad Max Saga", posterPath: "/iADOJ8Zymht2JPMoy3R7xceZprc.jpg", releaseDate: "2024-05-24", voteAverage: 0 },
+  { id: 603, title: "Inside Out 2", posterPath: "/gKkl37BQuKTanygYQG1pyYgLVgf.jpg", releaseDate: "2024-06-14", voteAverage: 0 },
+  { id: 604, title: "Bad Boys: Ride or Die", posterPath: "/oGythE98MYleE6mZlGs5oCGcFx9.jpg", releaseDate: "2024-06-07", voteAverage: 0 },
+  { id: 605, title: "Despicable Me 4", posterPath: "/aQPeznSu7XDTrrdCtT5eLiu52Yu.jpg", releaseDate: "2024-07-03", voteAverage: 0 },
+  { id: 606, title: "Deadpool & Wolverine", posterPath: "/8b8R8l88Qje9dn9OE8PY05Nxl1X.jpg", releaseDate: "2024-07-26", voteAverage: 0 },
+  { id: 607, title: "Alien: Romulus", posterPath: "/b33nnKl1GSFbao4l3fZDDqsMx0F.jpg", releaseDate: "2024-08-16", voteAverage: 0 },
+  { id: 608, title: "Beetlejuice Beetlejuice", posterPath: "/pKPPUcPqKLa6bIzIh0R5IW3Ffd2.jpg", releaseDate: "2024-09-06", voteAverage: 0 },
+  { id: 609, title: "Joker: Folie à Deux", posterPath: "/aciP8Km0waTLXEYf5ybTO5rzuHd.jpg", releaseDate: "2024-10-04", voteAverage: 0 },
+  { id: 610, title: "Venom: The Last Dance", posterPath: "/loxSs0ySvi9dGaKRn7djylqLKCb.jpg", releaseDate: "2024-10-25", voteAverage: 0 },
+  { id: 611, title: "Gladiator II", posterPath: "/wDWAA5QApz5L5BKfFaaj8HJXF7k.jpg", releaseDate: "2024-11-22", voteAverage: 0 },
+  { id: 612, title: "Moana 2", posterPath: "/yh64qw9mgXBvlaWDi7Q9tpUBAvH.jpg", releaseDate: "2024-11-27", voteAverage: 0 },
+];
+
+const months = [
+  { name: "Mei 2024", count: 12, active: true },
+  { name: "Juni 2024", count: 15, active: false },
+  { name: "Juli 2024", count: 18, active: false },
+  { name: "Agustus 2024", count: 14, active: false },
+  { name: "September 2024", count: 10, active: false },
+  { name: "Oktober 2024", count: 16, active: false },
+  { name: "November 2024", count: 20, active: false },
+  { name: "Desember 2024", count: 22, active: false },
+];
+
+const getCountdown = (dateStr: string) => {
+  const releaseDate = new Date(dateStr);
+  const today = new Date();
+  const diff = releaseDate.getTime() - today.getTime();
+  const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+  return days > 0 ? days : 0;
+};
+---
+
+<MainLayout title="Film Mendatang - ASTRO" description="Film yang akan segera tayang di bioskop">
+  <!-- Hero Section -->
+  <div class="relative h-[50vh] overflow-hidden">
+    <img 
+      src="https://image.tmdb.org/t/p/original/qhqMRNXVCTLAmwDmU6lFr9xLqZn.jpg" 
+      alt="Upcoming Movies"
+      class="w-full h-full object-cover"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-dark-500 via-dark-500/70 to-transparent"></div>
+    <div class="absolute inset-0 flex items-center justify-center text-center">
+      <div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4">
+          📅 Film Mendatang
+        </h1>
+        <p class="text-xl text-secondary-300 max-w-2xl mx-auto">
+          Film-film yang akan tayang di bioskop dalam waktu dekat
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-custom py-8">
+    <!-- Month Filter -->
+    <section class="mb-8 -mt-16 relative z-10">
+      <div class="card p-4">
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
+          {months.map((month) => (
+            <button 
+              class={`px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
+                month.active 
+                  ? 'bg-primary-500 text-white' 
+                  : 'bg-dark-300 text-secondary-300 hover:bg-dark-200'
+              }`}
+            >
+              {month.name}
+              <span class={`ml-1 text-xs ${month.active ? 'text-white/70' : 'text-secondary-500'}`}>
+                ({month.count})
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Upcoming -->
+    <section class="mb-12">
+      <h2 class="text-xl font-bold text-white mb-6">🔥 Film Yang Paling Ditunggu</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Featured Card 1 -->
+        <div class="card overflow-hidden group">
+          <div class="flex flex-col md:flex-row">
+            <div class="w-full md:w-48 flex-shrink-0">
+              <img 
+                src="https://image.tmdb.org/t/p/w500/8b8R8l88Qje9dn9OE8PY05Nxl1X.jpg"
+                alt="Deadpool & Wolverine"
+                class="w-full h-72 md:h-full object-cover"
+              />
+            </div>
+            <div class="p-6 flex-1">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="badge-primary">Marvel</span>
+                <span class="badge-violet">Action</span>
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2 group-hover:text-primary-400 transition-colors">
+                Deadpool & Wolverine
+              </h3>
+              <p class="text-secondary-300 text-sm mb-4 line-clamp-3">
+                Deadpool dan Wolverine akhirnya bertemu dalam petualangan epik di MCU. 
+                Film ini akan menjadi debut Deadpool di Marvel Cinematic Universe.
+              </p>
+              <div class="flex items-center gap-4 text-sm text-secondary-400 mb-4">
+                <span>📅 26 Juli 2024</span>
+                <span>⏱️ 127 menit</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="text-center">
+                  <div class="text-3xl font-bold text-gradient">
+                    {getCountdown('2024-07-26')}
+                  </div>
+                  <div class="text-xs text-secondary-500">Hari Lagi</div>
+                </div>
+                <div class="flex gap-2">
+                  <button class="btn-outline py-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                    Ingatkan
+                  </button>
+                  <a href="/film/606" class="btn-primary py-2">Detail</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Featured Card 2 -->
+        <div class="card overflow-hidden group">
+          <div class="flex flex-col md:flex-row">
+            <div class="w-full md:w-48 flex-shrink-0">
+              <img 
+                src="https://image.tmdb.org/t/p/w500/aciP8Km0waTLXEYf5ybTO5rzuHd.jpg"
+                alt="Joker: Folie à Deux"
+                class="w-full h-72 md:h-full object-cover"
+              />
+            </div>
+            <div class="p-6 flex-1">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="badge-magenta">DC</span>
+                <span class="badge-violet">Drama</span>
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2 group-hover:text-primary-400 transition-colors">
+                Joker: Folie à Deux
+              </h3>
+              <p class="text-secondary-300 text-sm mb-4 line-clamp-3">
+                Sekuel dari film Joker yang fenomenal. Arthur Fleck bertemu dengan Harley Quinn 
+                dalam kisah yang penuh musik dan kegilaan.
+              </p>
+              <div class="flex items-center gap-4 text-sm text-secondary-400 mb-4">
+                <span>📅 4 Oktober 2024</span>
+                <span>⏱️ TBA</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="text-center">
+                  <div class="text-3xl font-bold text-gradient-accent">
+                    {getCountdown('2024-10-04')}
+                  </div>
+                  <div class="text-xs text-secondary-500">Hari Lagi</div>
+                </div>
+                <div class="flex gap-2">
+                  <button class="btn-outline py-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                    Ingatkan
+                  </button>
+                  <a href="/film/609" class="btn-primary py-2">Detail</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- All Upcoming Movies -->
+    <section>
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-white">Semua Film Mendatang</h2>
+        <select class="input w-48 text-sm">
+          <option value="date">Tanggal Rilis</option>
+          <option value="popularity">Popularitas</option>
+          <option value="title">Judul A-Z</option>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        {upcomingMovies.map((movie) => (
+          <div class="group">
+            <div class="relative">
+              <MovieCard 
+                id={movie.id}
+                title={movie.title}
+                posterPath={movie.posterPath}
+                releaseDate={movie.releaseDate}
+                voteAverage={movie.voteAverage}
+              />
+              <!-- Countdown Overlay -->
+              <div class="absolute top-2 right-2 bg-dark-500/90 backdrop-blur-sm px-2 py-1 rounded-lg">
+                <span class="text-primary-400 font-bold text-sm">
+                  {getCountdown(movie.releaseDate)} hari
+                </span>
+              </div>
+            </div>
+            <div class="mt-2">
+              <button class="w-full py-2 bg-dark-300 rounded-lg text-secondary-300 hover:bg-primary-500 hover:text-white transition-all flex items-center justify-center gap-2 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                </svg>
+                Ingatkan
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-center gap-2 mt-12">
+        <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-400 hover:bg-dark-200 transition-colors" disabled>
+          <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <button class="w-10 h-10 rounded-lg bg-primary-500 text-white">1</button>
+        <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">2</button>
+        <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">3</button>
+        <button class="w-10 h-10 rounded-lg bg-dark-300 text-secondary-300 hover:bg-dark-200 transition-colors">
+          <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="mt-16">
+      <div class="card p-8 bg-gradient-to-r from-primary-500/20 to-violet-500/20 border border-primary-500/30 text-center">
+        <h3 class="text-2xl font-bold text-white mb-2">🎬 Jangan Lewatkan Film Favorit!</h3>
+        <p class="text-secondary-300 mb-6">Dapatkan notifikasi saat film yang kamu tunggu mulai tayang</p>
+        <div class="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
+          <input type="email" placeholder="Masukkan email kamu" class="input flex-1" />
+          <button class="btn-primary whitespace-nowrap">Berlangganan</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</MainLayout>
