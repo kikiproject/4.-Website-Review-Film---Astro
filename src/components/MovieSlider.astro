@@ -1,5 +1,6 @@
 ---
 import MovieCard from './MovieCard.astro';
+import { Icon } from '@iconify/react';
 
 interface Movie {
   id: number;
@@ -11,32 +12,40 @@ interface Movie {
 }
 
 interface Props {
-  title: string;
+  title?: string;
+  titleIcon?: string;
   subtitle?: string;
   movies: Movie[];
   viewAllLink?: string;
   viewAllText?: string;
   cardSize?: 'small' | 'medium' | 'large';
   showRating?: boolean;
+  showHeader?: boolean;
 }
 
 const { 
   title, 
+  titleIcon,
   subtitle, 
   movies, 
   viewAllLink, 
   viewAllText = 'Lihat Semua',
   cardSize = 'medium',
-  showRating = true
+  showRating = true,
+  showHeader = true
 } = Astro.props;
 ---
 
-<section class="section py-8 md:py-12">
+<section class={showHeader ? "section py-8 md:py-12" : ""}>
   <div class="container-custom">
     <!-- Section Header -->
+    {showHeader && title && (
     <div class="flex items-end justify-between mb-6">
       <div>
-        <h2 class="section-title">{title}</h2>
+        <h2 class="section-title flex items-center gap-2">
+          {titleIcon && <Icon icon={titleIcon} class="w-6 h-6 text-primary-400" client:load />}
+          {title}
+        </h2>
         {subtitle && <p class="section-subtitle">{subtitle}</p>}
       </div>
       {viewAllLink && (
@@ -45,12 +54,11 @@ const {
           class="hidden sm:flex items-center gap-2 text-primary-400 hover:text-primary-300 font-medium transition-colors"
         >
           {viewAllText}
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
+          <Icon icon="lucide:arrow-right" class="w-5 h-5" client:load />
         </a>
       )}
     </div>
+    )}
 
     <!-- Horizontal Scroll Container -->
     <div class="relative group">
@@ -59,9 +67,7 @@ const {
         class="scroll-arrow left hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 items-center justify-center bg-dark-300 border border-dark-100 rounded-full text-white opacity-0 group-hover:opacity-100 hover:bg-primary-500 transition-all duration-300 shadow-card"
         aria-label="Scroll ke kiri"
       >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-        </svg>
+        <Icon icon="lucide:chevron-left" class="w-6 h-6" client:load />
       </button>
 
       <!-- Movies Container -->
@@ -87,23 +93,19 @@ const {
         class="scroll-arrow right hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 items-center justify-center bg-dark-300 border border-dark-100 rounded-full text-white opacity-0 group-hover:opacity-100 hover:bg-primary-500 transition-all duration-300 shadow-card"
         aria-label="Scroll ke kanan"
       >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
+        <Icon icon="lucide:chevron-right" class="w-6 h-6" client:load />
       </button>
     </div>
 
     <!-- Mobile View All -->
-    {viewAllLink && (
+    {showHeader && viewAllLink && (
       <div class="sm:hidden mt-4 text-center">
         <a 
           href={viewAllLink}
           class="inline-flex items-center gap-2 text-primary-400 hover:text-primary-300 font-medium transition-colors"
         >
           {viewAllText}
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
+          <Icon icon="lucide:arrow-right" class="w-5 h-5" client:load />
         </a>
       </div>
     )}

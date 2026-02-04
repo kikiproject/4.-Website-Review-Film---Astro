@@ -1,0 +1,293 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Icon } from '@iconify/react';
+
+// VTuber user data (would come from auth in production)
+const vtuber = {
+  id: 1,
+  role: 'vtuber',
+  displayName: 'Sakura Hana',
+  username: 'sakura_vtuber',
+  vtuberName: 'Sakura Hana',
+  vtuberAvatar: null,
+  vtuberAgency: 'ASTRO VTuber',
+  vtuberIsLive: false,
+  vtuberFollowersCount: 12500,
+  isVerified: true
+};
+
+const stats = [
+  { label: "Followers", value: "12.5K", icon: "lucide:users", color: "violet" },
+  { label: "Watch Party", value: "23", icon: "lucide:tv", color: "primary" },
+  { label: "Total Views", value: "45.2K", icon: "lucide:eye", color: "magenta" },
+  { label: "Rating", value: "4.9", icon: "lucide:star", color: "yellow" },
+];
+
+const upcomingEvents = [
+  { id: 1, movie: 'Dune: Part Two', date: '8 Feb 2026', time: '20:00', participants: 0, maxParticipants: 50 },
+  { id: 2, movie: 'Spider-Verse 2', date: '10 Feb 2026', time: '19:30', participants: 0, maxParticipants: 50 },
+];
+
+const recentParties = [
+  { id: 1, movie: 'Oppenheimer', date: '5 Feb 2026', participants: 45, rating: 4.8 },
+  { id: 2, movie: 'The Boy and the Heron', date: '2 Feb 2026', participants: 38, rating: 4.9 },
+  { id: 3, movie: 'Jujutsu Kaisen 0', date: '28 Jan 2026', participants: 52, rating: 5.0 },
+];
+
+const topSupporters = [
+  { name: 'MovieLover123', avatar: null, supportCount: 15 },
+  { name: 'AnimeFan99', avatar: null, supportCount: 12 },
+  { name: 'CinematicVibes', avatar: null, supportCount: 10 },
+];
+---
+
+<BaseLayout title="VTuber Dashboard - ASTRO">
+  <div class="flex min-h-screen bg-dark-500">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-dark-400 border-r border-dark-200 flex flex-col fixed h-full">
+      <!-- Logo -->
+      <div class="p-6 border-b border-dark-200">
+        <a href="/" class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-pink-500 rounded-xl flex items-center justify-center">
+            <Icon icon="mdi:account-star" class="w-6 h-6 text-white" client:load />
+          </div>
+          <div>
+            <span class="font-display font-bold text-xl text-white">ASTRO</span>
+            <span class="text-xs text-violet-400 block">VTuber Panel</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 p-4 space-y-1">
+        <a href="/vtuber" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-violet-500/10 text-violet-400 border-l-2 border-violet-500">
+          <Icon icon="lucide:layout-dashboard" class="w-5 h-5" client:load />
+          Dashboard
+        </a>
+        <a href="/vtuber/watch-party" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <Icon icon="lucide:tv" class="w-5 h-5" client:load />
+          Watch Party
+          <span class="ml-auto bg-violet-500 text-white text-xs px-2 py-0.5 rounded-full">{upcomingEvents.length}</span>
+        </a>
+        <a href="/vtuber/schedule" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <Icon icon="lucide:calendar" class="w-5 h-5" client:load />
+          Jadwal Event
+        </a>
+        <a href="/vtuber/followers" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <Icon icon="lucide:users" class="w-5 h-5" client:load />
+          Followers
+        </a>
+        <a href="/vtuber/analytics" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <Icon icon="lucide:bar-chart-3" class="w-5 h-5" client:load />
+          Analytics
+        </a>
+        
+        <div class="pt-4 border-t border-dark-200 mt-4">
+          <a href="/vtuber/profile" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+            <Icon icon="lucide:user" class="w-5 h-5" client:load />
+            Edit Profil
+          </a>
+          <a href="/vtuber/settings" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+            <Icon icon="lucide:settings" class="w-5 h-5" client:load />
+            Pengaturan
+          </a>
+        </div>
+      </nav>
+
+      <!-- VTuber Profile Card -->
+      <div class="p-4 border-t border-dark-200">
+        <div class="flex items-center gap-3 p-3 bg-gradient-to-r from-violet-500/10 to-pink-500/10 rounded-xl border border-violet-500/30">
+          <div class="relative">
+            <img 
+              src={vtuber.vtuberAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(vtuber.vtuberName)}&background=8B5CF6&color=fff`}
+              alt={vtuber.vtuberName}
+              class="w-10 h-10 rounded-full ring-2 ring-violet-500"
+            />
+            <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-violet-500 rounded-full flex items-center justify-center">
+              <Icon icon="lucide:check" class="w-2.5 h-2.5 text-white" client:load />
+            </div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-medium text-white truncate flex items-center gap-1">
+              {vtuber.vtuberName}
+              <Icon icon="mdi:account-star" class="w-4 h-4 text-violet-400" client:load />
+            </p>
+            <p class="text-xs text-violet-400">{vtuber.vtuberAgency}</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-64 p-8">
+      <!-- Header with Go Live Button -->
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h1 class="text-3xl font-display font-bold text-white mb-2">
+            Dashboard VTuber
+          </h1>
+          <p class="text-secondary-400">Kelola watch party dan interaksi dengan followers</p>
+        </div>
+        <button id="go-live-btn" class="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl font-bold hover:shadow-glow transition-all flex items-center gap-2">
+          <Icon icon="lucide:radio" class="w-5 h-5" client:load />
+          Mulai Watch Party
+        </button>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {stats.map((stat) => (
+          <div class="bg-dark-400 rounded-2xl p-6 border border-dark-200 hover:border-violet-500/30 transition-colors">
+            <div class="flex items-center justify-between mb-4">
+              <div class={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                stat.color === 'violet' ? 'bg-violet-500/20' :
+                stat.color === 'primary' ? 'bg-primary-500/20' :
+                stat.color === 'magenta' ? 'bg-pink-500/20' :
+                'bg-yellow-500/20'
+              }`}>
+                <Icon icon={stat.icon} class={`w-6 h-6 ${
+                  stat.color === 'violet' ? 'text-violet-400' :
+                  stat.color === 'primary' ? 'text-primary-400' :
+                  stat.color === 'magenta' ? 'text-pink-400' :
+                  'text-yellow-400'
+                }`} client:load />
+              </div>
+            </div>
+            <p class="text-3xl font-bold text-white mb-1">{stat.value}</p>
+            <p class="text-secondary-400 text-sm">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Upcoming Events -->
+        <div class="lg:col-span-2 bg-dark-400 rounded-2xl p-6 border border-dark-200">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <Icon icon="lucide:calendar" class="w-5 h-5 text-violet-400" client:load />
+              Event Mendatang
+            </h2>
+            <a href="/vtuber/watch-party/create" class="text-violet-400 hover:text-violet-300 text-sm flex items-center gap-1">
+              <Icon icon="lucide:plus" class="w-4 h-4" client:load />
+              Buat Baru
+            </a>
+          </div>
+          
+          {upcomingEvents.length > 0 ? (
+            <div class="space-y-4">
+              {upcomingEvents.map((event) => (
+                <div class="flex items-center gap-4 p-4 bg-dark-300/50 rounded-xl border border-violet-500/20 hover:border-violet-500/40 transition-colors">
+                  <div class="w-16 h-20 bg-dark-200 rounded-lg overflow-hidden">
+                    <div class="w-full h-full bg-gradient-to-br from-violet-500/20 to-pink-500/20 flex items-center justify-center">
+                      <Icon icon="lucide:film" class="w-6 h-6 text-violet-400" client:load />
+                    </div>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="font-bold text-white">{event.movie}</h3>
+                    <p class="text-secondary-400 text-sm">{event.date} • {event.time} WIB</p>
+                    <p class="text-violet-400 text-sm">{event.participants}/{event.maxParticipants} peserta</p>
+                  </div>
+                  <div class="flex gap-2">
+                    <button class="p-2 bg-dark-200 hover:bg-dark-100 rounded-lg transition-colors">
+                      <Icon icon="lucide:edit" class="w-4 h-4 text-secondary-400" client:load />
+                    </button>
+                    <button class="p-2 bg-violet-500 hover:bg-violet-600 rounded-lg transition-colors">
+                      <Icon icon="lucide:play" class="w-4 h-4 text-white" client:load />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div class="text-center py-12">
+              <Icon icon="lucide:calendar-x" class="w-16 h-16 text-secondary-600 mx-auto mb-4" client:load />
+              <p class="text-secondary-400">Belum ada event yang dijadwalkan</p>
+              <a href="/vtuber/watch-party/create" class="mt-4 inline-block px-4 py-2 bg-violet-500 text-white rounded-lg hover:bg-violet-600 transition-colors">
+                Buat Watch Party
+              </a>
+            </div>
+          )}
+        </div>
+
+        <!-- Top Supporters -->
+        <div class="bg-dark-400 rounded-2xl p-6 border border-dark-200">
+          <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <Icon icon="lucide:heart" class="w-5 h-5 text-pink-400" client:load />
+            Top Supporters
+          </h2>
+          <div class="space-y-4">
+            {topSupporters.map((supporter, index) => (
+              <div class="flex items-center gap-3 p-3 bg-dark-300/50 rounded-xl">
+                <span class={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                  index === 0 ? 'bg-yellow-500 text-black' :
+                  index === 1 ? 'bg-gray-400 text-black' :
+                  'bg-amber-700 text-white'
+                }`}>
+                  {index + 1}
+                </span>
+                <img 
+                  src={supporter.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(supporter.name)}&background=1A2DE7&color=fff`}
+                  alt={supporter.name}
+                  class="w-8 h-8 rounded-full"
+                />
+                <div class="flex-1 min-w-0">
+                  <p class="text-white font-medium truncate">{supporter.name}</p>
+                  <p class="text-secondary-500 text-xs">{supporter.supportCount}x hadir</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Watch Parties -->
+      <div class="mt-8 bg-dark-400 rounded-2xl p-6 border border-dark-200">
+        <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <Icon icon="lucide:history" class="w-5 h-5 text-primary-400" client:load />
+          Riwayat Watch Party
+        </h2>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="text-left text-secondary-400 border-b border-dark-200">
+                <th class="pb-4 font-medium">Film</th>
+                <th class="pb-4 font-medium">Tanggal</th>
+                <th class="pb-4 font-medium">Peserta</th>
+                <th class="pb-4 font-medium">Rating</th>
+                <th class="pb-4 font-medium">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentParties.map((party) => (
+                <tr class="border-b border-dark-200/50">
+                  <td class="py-4">
+                    <span class="text-white font-medium">{party.movie}</span>
+                  </td>
+                  <td class="py-4 text-secondary-400">{party.date}</td>
+                  <td class="py-4 text-secondary-400">{party.participants} orang</td>
+                  <td class="py-4">
+                    <span class="flex items-center gap-1 text-yellow-400">
+                      <Icon icon="lucide:star" class="w-4 h-4 fill-current" client:load />
+                      {party.rating}
+                    </span>
+                  </td>
+                  <td class="py-4">
+                    <button class="text-violet-400 hover:text-violet-300 text-sm">
+                      Lihat Detail
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</BaseLayout>
+
+<script>
+  document.getElementById('go-live-btn')?.addEventListener('click', () => {
+    window.location.href = '/vtuber/watch-party/create';
+  });
+</script>

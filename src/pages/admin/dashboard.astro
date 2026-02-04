@@ -1,0 +1,333 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Icon } from '@iconify/react';
+
+// Mock data - In production this would come from MySQL
+const stats = [
+  { label: "Total Pengguna", value: "12,458", change: "+12%", icon: "lucide:users", color: "primary" },
+  { label: "Review Baru", value: "1,245", change: "+8%", icon: "lucide:message-square", color: "violet" },
+  { label: "Film Aktif", value: "8,932", change: "+5%", icon: "lucide:film", color: "magenta" },
+  { label: "VTuber Aktif", value: "15", change: "+3", icon: "mdi:account-star", color: "pink" },
+  { label: "Watch Party", value: "45", change: "+18%", icon: "lucide:tv", color: "cyan" },
+  { label: "Laporan", value: "23", change: "-15%", icon: "lucide:alert-triangle", color: "red" },
+];
+
+const recentUsers = [
+  { name: "Ahmad Rizky", email: "ahmad@example.com", joined: "2 jam lalu", role: "user", avatar: "https://ui-avatars.com/api/?name=Ahmad+Rizky&background=1A2DE7&color=fff" },
+  { name: "Sarah Putri", email: "sarah@example.com", joined: "5 jam lalu", role: "user", avatar: "https://ui-avatars.com/api/?name=Sarah+Putri&background=8F29BC&color=fff" },
+  { name: "Budi Santoso", email: "budi@example.com", joined: "1 hari lalu", role: "user", avatar: "https://ui-avatars.com/api/?name=Budi+Santoso&background=F062C8&color=fff" },
+];
+
+const vtubers = [
+  { id: 1, name: "Sakura Hana", username: "sakura_vtuber", agency: "ASTRO VTuber", followers: 12500, isLive: true, avatar: "https://ui-avatars.com/api/?name=Sakura+Hana&background=8B5CF6&color=fff" },
+  { id: 2, name: "Yuki Shirogane", username: "yuki_vtuber", agency: "ASTRO VTuber", followers: 8300, isLive: false, avatar: "https://ui-avatars.com/api/?name=Yuki+Shirogane&background=EC4899&color=fff" },
+  { id: 3, name: "Luna Celestia", username: "luna_vtuber", agency: "ASTRO VTuber", followers: 15200, isLive: true, avatar: "https://ui-avatars.com/api/?name=Luna+Celestia&background=6366F1&color=fff" },
+];
+
+const pendingReviews = [
+  { id: 1, user: "Ahmad Rizky", movie: "Dune: Part Two", rating: 9, status: "pending" },
+  { id: 2, user: "Sarah Putri", movie: "Kung Fu Panda 4", rating: 7, status: "pending" },
+  { id: 3, user: "Budi Santoso", movie: "Oppenheimer", rating: 10, status: "flagged" },
+];
+
+const recentReports = [
+  { id: 1, type: "review", user: "user123", reason: "Spoiler tanpa peringatan", date: "2 jam lalu" },
+  { id: 2, type: "comment", user: "user456", reason: "Bahasa kasar", date: "5 jam lalu" },
+];
+---
+
+<BaseLayout title="Admin Dashboard - ASTRO">
+  <div class="flex h-screen bg-dark-500">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-dark-400 border-r border-dark-200 flex flex-col fixed h-full z-20">
+      <!-- Logo -->
+      <div class="p-6 border-b border-dark-200">
+        <a href="/admin" class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-violet-500 rounded-xl flex items-center justify-center">
+            <Icon icon="lucide:shield" class="w-6 h-6 text-white" client:load />
+          </div>
+          <div>
+            <span class="font-display font-bold text-xl text-white">ASTRO</span>
+            <span class="text-xs text-red-400 block font-medium">Admin Panel</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+        <a href="/admin" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary-500/10 text-primary-400 border-l-2 border-primary-500">
+          <Icon icon="lucide:layout-dashboard" class="w-5 h-5" client:load />
+          Dashboard
+        </a>
+        <a href="/admin/pengguna" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <Icon icon="lucide:users" class="w-5 h-5" client:load />
+          Kelola Pengguna
+        </a>
+        <a href="/admin/vtuber" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <Icon icon="mdi:account-star" class="w-5 h-5" client:load />
+          Kelola VTuber
+          <span class="ml-auto bg-violet-500 text-white text-xs px-2 py-0.5 rounded-full">{vtubers.length}</span>
+        </a>
+        <a href="/admin/review" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <Icon icon="lucide:message-square" class="w-5 h-5" client:load />
+          Moderasi Review
+          <span class="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">23</span>
+        </a>
+        <a href="/admin/film" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <Icon icon="lucide:film" class="w-5 h-5" client:load />
+          Kelola Film
+        </a>
+        <a href="/admin/watch-party" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <Icon icon="lucide:tv" class="w-5 h-5" client:load />
+          Watch Party
+        </a>
+        <a href="/admin/statistik" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <Icon icon="lucide:bar-chart-3" class="w-5 h-5" client:load />
+          Statistik
+        </a>
+        <a href="/admin/laporan" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <Icon icon="lucide:alert-triangle" class="w-5 h-5" client:load />
+          Laporan
+          <span class="ml-auto bg-yellow-500 text-dark-500 text-xs px-2 py-0.5 rounded-full">5</span>
+        </a>
+
+        <div class="border-t border-dark-200 my-4"></div>
+
+        <a href="/admin/pengaturan" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary-400 hover:bg-dark-300 transition-colors">
+          <Icon icon="lucide:settings" class="w-5 h-5" client:load />
+          Pengaturan
+        </a>
+      </nav>
+
+      <!-- User Info -->
+      <div class="p-4 border-t border-dark-200">
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <img 
+              src="https://ui-avatars.com/api/?name=Admin&background=1A2DE7&color=fff"
+              alt="Admin"
+              class="w-10 h-10 rounded-full"
+            />
+            <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full border-2 border-dark-400"></div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-white font-medium text-sm truncate">Super Admin</p>
+            <p class="text-secondary-400 text-xs truncate">admin@astro.id</p>
+          </div>
+          <a href="/" class="p-2 text-secondary-400 hover:text-white transition-colors" title="Kembali ke Website">
+            <Icon icon="lucide:external-link" class="w-5 h-5" client:load />
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-64 overflow-auto">
+      <!-- Header -->
+      <header class="sticky top-0 z-10 bg-dark-500/95 backdrop-blur-md border-b border-dark-200 px-8 py-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-bold text-white">Dashboard Admin</h1>
+            <p class="text-secondary-400 text-sm">Selamat datang kembali, Admin!</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="relative">
+              <input 
+                type="search" 
+                placeholder="Cari..." 
+                class="input w-64 pl-10"
+              />
+              <Icon icon="lucide:search" class="w-5 h-5 text-secondary-400 absolute left-3 top-1/2 -translate-y-1/2" client:load />
+            </div>
+            <button class="relative p-2 bg-dark-300 rounded-lg text-secondary-400 hover:text-white transition-colors">
+              <Icon icon="lucide:bell" class="w-6 h-6" client:load />
+              <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <div class="p-8">
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
+          {stats.map((stat) => (
+            <div class="card p-5 hover:border-primary-500/30 transition-colors">
+              <div class="flex items-center justify-between mb-3">
+                <div class={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  stat.color === 'primary' ? 'bg-primary-500/20' :
+                  stat.color === 'violet' ? 'bg-violet-500/20' :
+                  stat.color === 'magenta' ? 'bg-pink-500/20' :
+                  stat.color === 'pink' ? 'bg-pink-500/20' :
+                  stat.color === 'cyan' ? 'bg-cyan-500/20' :
+                  'bg-red-500/20'
+                }`}>
+                  <Icon icon={stat.icon} class={`w-5 h-5 ${
+                    stat.color === 'primary' ? 'text-primary-400' :
+                    stat.color === 'violet' ? 'text-violet-400' :
+                    stat.color === 'magenta' ? 'text-pink-400' :
+                    stat.color === 'pink' ? 'text-pink-400' :
+                    stat.color === 'cyan' ? 'text-cyan-400' :
+                    'text-red-400'
+                  }`} client:load />
+                </div>
+                <span class={`text-xs font-medium ${stat.change.startsWith('+') ? 'text-green-400' : 'text-red-400'}`}>
+                  {stat.change}
+                </span>
+              </div>
+              <h3 class="text-2xl font-bold text-white mb-1">{stat.value}</h3>
+              <p class="text-secondary-400 text-xs">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Recent Users -->
+          <div class="lg:col-span-2">
+            <div class="card">
+              <div class="p-6 border-b border-dark-200 flex items-center justify-between">
+                <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                  <Icon icon="lucide:user-plus" class="w-5 h-5 text-primary-400" client:load />
+                  Pengguna Baru
+                </h2>
+                <a href="/admin/pengguna" class="text-primary-400 hover:text-primary-300 text-sm flex items-center gap-1">
+                  Lihat Semua
+                  <Icon icon="lucide:arrow-right" class="w-4 h-4" client:load />
+                </a>
+              </div>
+              <div class="divide-y divide-dark-200">
+                {recentUsers.map((user) => (
+                  <div class="p-4 flex items-center justify-between hover:bg-dark-300/50 transition-colors">
+                    <div class="flex items-center gap-4">
+                      <img src={user.avatar} alt={user.name} class="w-10 h-10 rounded-full" />
+                      <div>
+                        <h3 class="text-white font-medium">{user.name}</h3>
+                        <p class="text-secondary-400 text-sm">{user.email}</p>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <span class="px-2 py-1 bg-primary-500/20 text-primary-400 text-xs rounded-full">{user.role}</span>
+                      <span class="text-secondary-400 text-sm">{user.joined}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <!-- VTuber Management Quick View -->
+          <div>
+            <div class="card">
+              <div class="p-6 border-b border-dark-200 flex items-center justify-between">
+                <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                  <Icon icon="mdi:account-star" class="w-5 h-5 text-violet-400" client:load />
+                  VTuber Aktif
+                </h2>
+                <a href="/admin/vtuber" class="text-violet-400 hover:text-violet-300 text-sm flex items-center gap-1">
+                  Kelola
+                  <Icon icon="lucide:arrow-right" class="w-4 h-4" client:load />
+                </a>
+              </div>
+              <div class="divide-y divide-dark-200">
+                {vtubers.map((vtuber) => (
+                  <div class="p-4 hover:bg-dark-300/50 transition-colors">
+                    <div class="flex items-center gap-3">
+                      <div class="relative">
+                        <img src={vtuber.avatar} alt={vtuber.name} class="w-10 h-10 rounded-full ring-2 ring-violet-500" />
+                        {vtuber.isLive && (
+                          <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                            <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                          </div>
+                        )}
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                          <p class="text-white font-medium truncate">{vtuber.name}</p>
+                          {vtuber.isLive && (
+                            <span class="px-1.5 py-0.5 bg-red-500 text-white text-[10px] rounded font-bold">LIVE</span>
+                          )}
+                        </div>
+                        <p class="text-secondary-400 text-xs">{vtuber.followers.toLocaleString()} followers</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div class="p-4 border-t border-dark-200">
+                <button class="w-full py-2 bg-violet-500/20 hover:bg-violet-500/30 text-violet-400 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+                  <Icon icon="lucide:plus" class="w-4 h-4" client:load />
+                  Buat Akun VTuber
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pending Reviews Table -->
+        <div class="mt-8">
+          <div class="card">
+            <div class="p-6 border-b border-dark-200 flex items-center justify-between">
+              <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                <Icon icon="lucide:message-square" class="w-5 h-5 text-yellow-400" client:load />
+                Review Menunggu Moderasi
+              </h2>
+              <a href="/admin/review" class="text-primary-400 hover:text-primary-300 text-sm flex items-center gap-1">
+                Lihat Semua
+                <Icon icon="lucide:arrow-right" class="w-4 h-4" client:load />
+              </a>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead class="bg-dark-300">
+                  <tr>
+                    <th class="text-left p-4 text-secondary-300 font-medium text-sm">Pengguna</th>
+                    <th class="text-left p-4 text-secondary-300 font-medium text-sm">Film</th>
+                    <th class="text-left p-4 text-secondary-300 font-medium text-sm">Rating</th>
+                    <th class="text-left p-4 text-secondary-300 font-medium text-sm">Status</th>
+                    <th class="text-right p-4 text-secondary-300 font-medium text-sm">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pendingReviews.map((review) => (
+                    <tr class="border-t border-dark-200 hover:bg-dark-300/50 transition-colors">
+                      <td class="p-4 text-white">{review.user}</td>
+                      <td class="p-4 text-secondary-300">{review.movie}</td>
+                      <td class="p-4">
+                        <div class="flex items-center gap-1">
+                          <Icon icon="lucide:star" class="w-4 h-4 text-yellow-400 fill-current" client:load />
+                          <span class="text-white">{review.rating}/10</span>
+                        </div>
+                      </td>
+                      <td class="p-4">
+                        <span class={`px-2 py-1 rounded-full text-xs font-medium ${
+                          review.status === 'pending' 
+                            ? 'bg-yellow-500/20 text-yellow-400' 
+                            : 'bg-red-500/20 text-red-400'
+                        }`}>
+                          {review.status === 'pending' ? 'Menunggu' : 'Ditandai'}
+                        </span>
+                      </td>
+                      <td class="p-4 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                          <button class="p-2 bg-green-500/20 rounded-lg text-green-400 hover:bg-green-500/30 transition-colors" title="Setujui">
+                            <Icon icon="lucide:check" class="w-4 h-4" client:load />
+                          </button>
+                          <button class="p-2 bg-red-500/20 rounded-lg text-red-400 hover:bg-red-500/30 transition-colors" title="Tolak">
+                            <Icon icon="lucide:x" class="w-4 h-4" client:load />
+                          </button>
+                          <button class="p-2 bg-dark-300 rounded-lg text-secondary-400 hover:text-white transition-colors" title="Lihat Detail">
+                            <Icon icon="lucide:eye" class="w-4 h-4" client:load />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</BaseLayout>

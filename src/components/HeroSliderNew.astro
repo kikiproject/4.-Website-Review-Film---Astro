@@ -1,0 +1,485 @@
+---
+import { Icon } from '@iconify/react';
+
+interface Movie {
+  id: number;
+  title: string;
+  overview: string;
+  backdropPath: string | null;
+  posterPath: string | null;
+  releaseDate?: string;
+  voteAverage: number;
+  genreIds?: number[];
+}
+
+interface Props {
+  movies: Movie[];
+}
+
+const { movies } = Astro.props;
+
+const imageBaseUrl = 'https://image.tmdb.org/t/p';
+
+// Genre mapping
+const genreMap: Record<number, string> = {
+  28: 'Action',
+  12: 'Adventure', 
+  16: 'Animation',
+  35: 'Comedy',
+  80: 'Crime',
+  99: 'Documentary',
+  18: 'Drama',
+  10751: 'Family',
+  14: 'Fantasy',
+  36: 'History',
+  27: 'Horror',
+  10402: 'Music',
+  9648: 'Mystery',
+  10749: 'Romance',
+  878: 'Sci-Fi',
+  10770: 'TV Movie',
+  53: 'Thriller',
+  10752: 'War',
+  37: 'Western',
+};
+---
+
+<section class="relative min-h-screen overflow-hidden" id="hero-section">
+  <!-- Animated Background Grid -->
+  <div class="absolute inset-0 z-0">
+    <div class="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+  </div>
+
+  <!-- Floating Orbs -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/20 rounded-full blur-[120px] animate-float-slow"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-violet-500/20 rounded-full blur-[100px] animate-float-slow" style="animation-delay: 2s;"></div>
+    <div class="absolute top-1/2 right-1/3 w-64 h-64 bg-magenta-500/15 rounded-full blur-[80px] animate-float-slow" style="animation-delay: 4s;"></div>
+  </div>
+
+  <!-- Hero Slider -->
+  <div id="hero-slider" class="relative h-screen">
+    {movies.map((movie, index) => {
+      const backdropUrl = movie.backdropPath 
+        ? `${imageBaseUrl}/original${movie.backdropPath}`
+        : '/images/default-backdrop.jpg';
+      const genres = movie.genreIds?.slice(0, 3).map(id => genreMap[id]).filter(Boolean) || [];
+      const year = movie.releaseDate ? new Date(movie.releaseDate).getFullYear() : null;
+      const rating = Math.round(movie.voteAverage * 10) / 10;
+      
+      return (
+        <div 
+          class={`hero-slide absolute inset-0 transition-all duration-1000 ease-out ${index === 0 ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+          data-index={index}
+        >
+          <!-- Background with Parallax -->
+          <div class="absolute inset-0 overflow-hidden">
+            <img 
+              src={backdropUrl} 
+              alt={movie.title}
+              class="hero-bg-image absolute inset-0 w-full h-full object-cover scale-110"
+              loading={index === 0 ? 'eager' : 'lazy'}
+            />
+            <!-- Multi-layer gradient overlays -->
+            <div class="absolute inset-0 bg-gradient-to-t from-dark-500 via-dark-500/50 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-dark-500 via-dark-500/60 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-br from-primary-900/20 via-transparent to-violet-900/20"></div>
+            
+            <!-- Noise texture overlay -->
+            <div class="absolute inset-0 opacity-[0.015]" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuMDUiLz48L3N2Zz4=');"></div>
+          </div>
+
+          <!-- Content -->
+          <div class="relative h-full container-custom flex items-center pt-20">
+            <div class="max-w-3xl space-y-8">
+              <!-- Animated Badge -->
+              <div class="flex flex-wrap items-center gap-3 animate-fade-in-up" style="animation-delay: 0.2s;">
+                <span class="group relative px-5 py-2 rounded-full overflow-hidden">
+                  <span class="absolute inset-0 bg-gradient-to-r from-primary-500 via-violet-500 to-magenta-500 animate-gradient-x"></span>
+                  <span class="relative flex items-center gap-2 text-white text-sm font-bold">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                    </span>
+                    <Icon icon="lucide:flame" class="w-4 h-4" client:load />
+                    TRENDING #{index + 1}
+                  </span>
+                </span>
+                {genres.map((genre) => (
+                  <span class="px-4 py-2 bg-white/5 backdrop-blur-xl text-white/90 text-sm rounded-full border border-white/10 hover:border-white/30 transition-colors">
+                    {genre}
+                  </span>
+                ))}
+              </div>
+
+              <!-- Title with Glitch Effect -->
+              <div class="animate-fade-in-up" style="animation-delay: 0.4s;">
+                <h1 class="hero-title text-5xl md:text-6xl lg:text-8xl font-display font-black leading-[0.9] tracking-tight">
+                  <span class="block text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/80 drop-shadow-2xl">
+                    {movie.title}
+                  </span>
+                </h1>
+                <!-- Glowing underline -->
+                <div class="mt-4 h-1.5 w-32 bg-gradient-to-r from-primary-500 via-violet-500 to-magenta-500 rounded-full animate-pulse-glow"></div>
+              </div>
+
+              <!-- Meta Info with Icons -->
+              <div class="flex flex-wrap items-center gap-4 animate-fade-in-up" style="animation-delay: 0.6s;">
+                {year && (
+                  <div class="flex items-center gap-2 px-4 py-2.5 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10">
+                    <Icon icon="lucide:calendar" class="w-5 h-5 text-primary-400" client:load />
+                    <span class="text-white font-semibold">{year}</span>
+                  </div>
+                )}
+                <div class="flex items-center gap-2 px-4 py-2.5 bg-yellow-500/10 backdrop-blur-xl rounded-xl border border-yellow-500/20">
+                  <Icon icon="lucide:star" class="w-5 h-5 text-yellow-400 fill-yellow-400" client:load />
+                  <span class="text-yellow-400 font-bold">{rating}</span>
+                  <span class="text-white/50">/10</span>
+                </div>
+                <div class="flex items-center gap-2 px-4 py-2.5 bg-green-500/10 backdrop-blur-xl rounded-xl border border-green-500/20">
+                  <Icon icon="lucide:eye" class="w-5 h-5 text-green-400" client:load />
+                  <span class="text-green-400 font-semibold">2.5M</span>
+                </div>
+                <div class="flex items-center gap-2 px-4 py-2.5 bg-blue-500/10 backdrop-blur-xl rounded-xl border border-blue-500/20">
+                  <Icon icon="lucide:clock" class="w-5 h-5 text-blue-400" client:load />
+                  <span class="text-blue-400 font-semibold">2h 45m</span>
+                </div>
+              </div>
+
+              <!-- Overview with Typewriter effect -->
+              <p class="text-lg md:text-xl text-secondary-200 leading-relaxed max-w-2xl line-clamp-3 animate-fade-in-up" style="animation-delay: 0.8s;">
+                {movie.overview || 'Deskripsi tidak tersedia.'}
+              </p>
+
+              <!-- CTA Buttons -->
+              <div class="flex flex-wrap items-center gap-4 pt-4 animate-fade-in-up" style="animation-delay: 1s;">
+                <a 
+                  href={`/film/${movie.id}`} 
+                  class="group relative px-8 py-4 rounded-2xl overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-primary-500/25"
+                >
+                  <span class="absolute inset-0 bg-gradient-to-r from-primary-500 via-violet-500 to-primary-500 bg-[length:200%_100%] animate-gradient-x"></span>
+                  <span class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-violet-500 via-magenta-500 to-violet-500 bg-[length:200%_100%] animate-gradient-x"></span>
+                  <span class="relative flex items-center gap-3 text-white font-bold text-lg">
+                    <Icon icon="lucide:play" class="w-6 h-6 fill-current" client:load />
+                    Lihat Detail
+                  </span>
+                </a>
+                
+                <a 
+                  href={`/watch/${movie.id}`}
+                  class="group px-8 py-4 bg-white/5 backdrop-blur-xl rounded-2xl text-white font-bold text-lg border border-white/20 hover:bg-white/10 hover:border-white/40 hover:scale-105 transition-all duration-300 flex items-center gap-3"
+                >
+                  <Icon icon="lucide:tv" class="w-6 h-6 group-hover:text-primary-400 transition-colors" client:load />
+                  Nonton Bareng
+                </a>
+                
+                <button 
+                  class="group p-4 bg-white/5 backdrop-blur-xl rounded-2xl text-white border border-white/20 hover:bg-white/10 hover:border-magenta-500/40 hover:scale-110 transition-all duration-300"
+                  data-watchlist={movie.id}
+                  aria-label="Tambah ke Watchlist"
+                >
+                  <Icon icon="lucide:bookmark" class="w-6 h-6 group-hover:text-magenta-400 transition-colors" client:load />
+                </button>
+                
+                <button 
+                  class="group p-4 bg-white/5 backdrop-blur-xl rounded-2xl text-white border border-white/20 hover:bg-red-500/20 hover:border-red-500/40 hover:scale-110 transition-all duration-300"
+                  aria-label="Tambah ke Favorit"
+                >
+                  <Icon icon="lucide:heart" class="w-6 h-6 group-hover:text-red-400 group-hover:fill-red-400 transition-colors" client:load />
+                </button>
+              </div>
+            </div>
+
+            <!-- Floating Poster Card -->
+            <div class="hidden xl:block absolute right-12 top-1/2 -translate-y-1/2 animate-fade-in-left" style="animation-delay: 1.2s;">
+              <div class="relative group">
+                <!-- Glow effect -->
+                <div class="absolute -inset-4 bg-gradient-to-r from-primary-500 via-violet-500 to-magenta-500 rounded-3xl blur-2xl opacity-30 group-hover:opacity-50 transition-opacity animate-pulse-slow"></div>
+                
+                <div class="relative w-72 aspect-[2/3] rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl transform group-hover:scale-105 group-hover:rotate-1 transition-all duration-500">
+                  <img 
+                    src={`${imageBaseUrl}/w500${movie.posterPath}`}
+                    alt={movie.title}
+                    class="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                  <!-- Play overlay -->
+                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div class="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                      <Icon icon="lucide:play" class="w-8 h-8 text-white fill-white ml-1" client:load />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+
+  <!-- Modern Slider Navigation -->
+  <div class="absolute bottom-12 left-1/2 -translate-x-1/2 z-20">
+    <div class="flex items-center gap-6 px-6 py-4 bg-white/5 backdrop-blur-xl rounded-full border border-white/10">
+      <!-- Previous -->
+      <button 
+        id="hero-prev"
+        class="group w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-primary-500 transition-all duration-300 hover:scale-110"
+        aria-label="Slide sebelumnya"
+      >
+        <Icon icon="lucide:chevron-left" class="w-6 h-6 group-hover:-translate-x-0.5 transition-transform" client:load />
+      </button>
+
+      <!-- Dots with Progress -->
+      <div class="flex items-center gap-2">
+        {movies.map((_, index) => (
+          <button 
+            class={`hero-dot relative h-2 rounded-full transition-all duration-500 overflow-hidden ${index === 0 ? 'w-10 bg-primary-500' : 'w-2 bg-white/30 hover:bg-white/50'}`}
+            data-index={index}
+            aria-label={`Slide ${index + 1}`}
+          >
+            <span class="dot-progress absolute inset-0 bg-white/60 origin-left scale-x-0 rounded-full"></span>
+          </button>
+        ))}
+      </div>
+
+      <!-- Next -->
+      <button 
+        id="hero-next"
+        class="group w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-primary-500 transition-all duration-300 hover:scale-110"
+        aria-label="Slide berikutnya"
+      >
+        <Icon icon="lucide:chevron-right" class="w-6 h-6 group-hover:translate-x-0.5 transition-transform" client:load />
+      </button>
+    </div>
+  </div>
+
+  <!-- Scroll Indicator -->
+  <div class="absolute bottom-12 right-12 z-20 hidden lg:flex flex-col items-center gap-2">
+    <span class="text-white/40 text-xs uppercase tracking-[0.3em] font-medium">Scroll</span>
+    <div class="w-6 h-10 rounded-full border-2 border-white/20 flex justify-center pt-2">
+      <div class="w-1 h-3 bg-white/60 rounded-full animate-bounce"></div>
+    </div>
+  </div>
+
+  <!-- Side Progress -->
+  <div class="absolute right-8 top-1/2 -translate-y-1/2 z-20 hidden lg:block">
+    <div class="w-1 h-40 bg-white/10 rounded-full overflow-hidden">
+      <div id="side-progress" class="w-full bg-gradient-to-b from-primary-500 to-violet-500 rounded-full transition-all duration-100" style="height: 0%"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const slides = document.querySelectorAll('.hero-slide');
+  const dots = document.querySelectorAll('.hero-dot');
+  const prevBtn = document.getElementById('hero-prev');
+  const nextBtn = document.getElementById('hero-next');
+  const sideProgress = document.getElementById('side-progress');
+  
+  let currentIndex = 0;
+  let autoplayInterval: ReturnType<typeof setInterval>;
+  let progressInterval: ReturnType<typeof setInterval>;
+  const autoplayDuration = 7000;
+  const progressStep = 100 / (autoplayDuration / 50);
+
+  function showSlide(index: number) {
+    slides.forEach((slide, i) => {
+      const bgImage = slide.querySelector('.hero-bg-image') as HTMLElement;
+      
+      if (i === index) {
+        slide.classList.add('opacity-100', 'visible');
+        slide.classList.remove('opacity-0', 'invisible');
+        // Subtle parallax zoom
+        if (bgImage) {
+          bgImage.style.transform = 'scale(1.1)';
+          setTimeout(() => {
+            bgImage.style.transition = 'transform 7s ease-out';
+            bgImage.style.transform = 'scale(1.15)';
+          }, 100);
+        }
+      } else {
+        slide.classList.remove('opacity-100', 'visible');
+        slide.classList.add('opacity-0', 'invisible');
+        if (bgImage) {
+          bgImage.style.transition = 'none';
+          bgImage.style.transform = 'scale(1.1)';
+        }
+      }
+    });
+
+    dots.forEach((dot, i) => {
+      const progress = dot.querySelector('.dot-progress') as HTMLElement;
+      if (i === index) {
+        dot.classList.add('bg-primary-500', 'w-10');
+        dot.classList.remove('bg-white/30', 'w-2');
+        if (progress) {
+          progress.style.transition = 'none';
+          progress.style.transform = 'scaleX(0)';
+          setTimeout(() => {
+            progress.style.transition = `transform ${autoplayDuration}ms linear`;
+            progress.style.transform = 'scaleX(1)';
+          }, 50);
+        }
+      } else {
+        dot.classList.remove('bg-primary-500', 'w-10');
+        dot.classList.add('bg-white/30', 'w-2');
+        if (progress) {
+          progress.style.transition = 'none';
+          progress.style.transform = 'scaleX(0)';
+        }
+      }
+    });
+
+    currentIndex = index;
+    resetProgress();
+  }
+
+  function nextSlide() {
+    const newIndex = (currentIndex + 1) % slides.length;
+    showSlide(newIndex);
+  }
+
+  function prevSlide() {
+    const newIndex = (currentIndex - 1 + slides.length) % slides.length;
+    showSlide(newIndex);
+  }
+
+  function resetProgress() {
+    if (sideProgress) sideProgress.style.height = '0%';
+    clearInterval(progressInterval);
+    let progress = 0;
+    progressInterval = setInterval(() => {
+      progress += progressStep;
+      if (sideProgress) sideProgress.style.height = `${Math.min(progress, 100)}%`;
+      if (progress >= 100) clearInterval(progressInterval);
+    }, 50);
+  }
+
+  function startAutoplay() {
+    autoplayInterval = setInterval(nextSlide, autoplayDuration);
+    resetProgress();
+  }
+
+  function stopAutoplay() {
+    clearInterval(autoplayInterval);
+    clearInterval(progressInterval);
+  }
+
+  // Event listeners
+  nextBtn?.addEventListener('click', () => {
+    nextSlide();
+    stopAutoplay();
+    startAutoplay();
+  });
+
+  prevBtn?.addEventListener('click', () => {
+    prevSlide();
+    stopAutoplay();
+    startAutoplay();
+  });
+
+  dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+      showSlide(index);
+      stopAutoplay();
+      startAutoplay();
+    });
+  });
+
+  // Pause on hover
+  const heroSection = document.getElementById('hero-section');
+  heroSection?.addEventListener('mouseenter', stopAutoplay);
+  heroSection?.addEventListener('mouseleave', startAutoplay);
+
+  // Touch support
+  let touchStartX = 0;
+  heroSection?.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+
+  heroSection?.addEventListener('touchend', (e) => {
+    const touchEndX = e.changedTouches[0].screenX;
+    if (touchStartX - touchEndX > 50) {
+      nextSlide();
+    } else if (touchEndX - touchStartX > 50) {
+      prevSlide();
+    }
+    stopAutoplay();
+    startAutoplay();
+  }, { passive: true });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') prevSlide();
+    else if (e.key === 'ArrowRight') nextSlide();
+    stopAutoplay();
+    startAutoplay();
+  });
+
+  // Initialize
+  startAutoplay();
+</script>
+
+<style>
+  @keyframes gradient-x {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  
+  @keyframes float-slow {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(30px, -30px) rotate(5deg); }
+    66% { transform: translate(-20px, 20px) rotate(-5deg); }
+  }
+  
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes fade-in-left {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.5; }
+  }
+  
+  .animate-gradient-x {
+    animation: gradient-x 3s ease infinite;
+  }
+  
+  .animate-float-slow {
+    animation: float-slow 20s ease-in-out infinite;
+  }
+  
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out forwards;
+    opacity: 0;
+  }
+  
+  .animate-fade-in-left {
+    animation: fade-in-left 0.8s ease-out forwards;
+    opacity: 0;
+  }
+  
+  .animate-pulse-slow {
+    animation: pulse-slow 4s ease-in-out infinite;
+  }
+  
+  .animate-pulse-glow {
+    animation: pulse-slow 2s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+  }
+  
+  .hero-title {
+    text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  }
+  
+  .hero-bg-image {
+    will-change: transform;
+  }
+</style>

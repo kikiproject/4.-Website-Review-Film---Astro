@@ -1,7 +1,7 @@
 import type { Movie, MovieListResponse, Genre, Credits, VideoResult, SearchFilters } from '../types';
 
-// @ts-ignore - Astro environment
-const TMDB_API_KEY = (import.meta as any).env?.TMDB_API_KEY || 'YOUR_API_KEY';
+// TMDB API configuration
+const TMDB_API_KEY = import.meta.env.TMDB_API_KEY || '3fd2be6f0c70a2a598f084ddfb75487c';
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 export const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p';
 

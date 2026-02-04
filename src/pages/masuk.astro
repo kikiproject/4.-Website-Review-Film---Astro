@@ -191,8 +191,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     eyeClosed?.classList.toggle('hidden');
   });
 
+  // Show toast message
+  function showToast(message: string, type: 'success' | 'error' = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-4 right-4 px-6 py-4 rounded-xl shadow-xl z-50 flex items-center gap-3 animate-slide-in ${
+      type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+    }`;
+    toast.innerHTML = `
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        ${type === 'success' 
+          ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>'
+          : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>'
+        }
+      </svg>
+      <span>${message}</span>
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.classList.add('animate-slide-out');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
   // Form submission
   const loginForm = document.getElementById('login-form');
+  const submitBtn = loginForm?.querySelector('button[type="submit"]');
+  
   loginForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -200,18 +225,96 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const email = formData.get('email');
     const password = formData.get('password');
     
-    // TODO: Implement actual login
-    console.log('Login attempt:', { email, password });
+    // Disable button and show loading
+    if (submitBtn) {
+      submitBtn.setAttribute('disabled', 'true');
+      submitBtn.innerHTML = `
+        <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+        </svg>
+        Memproses...
+      `;
+    }
     
-    // Redirect to home on success
-    // window.location.href = '/';
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        showToast('Login berhasil! Mengalihkan...', 'success');
+        setTimeout(() => {
+          window.location.href = data.redirectUrl || '/';
+        }, 1000);
+      } else {
+        showToast(data.error || 'Login gagal', 'error');
+        // Reset button
+        if (submitBtn) {
+          submitBtn.removeAttribute('disabled');
+          submitBtn.innerHTML = `
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+            </svg>
+            Masuk
+          `;
+        }
+      }
+    } catch (error) {
+      showToast('Terjadi kesalahan. Silakan coba lagi.', 'error');
+      // Reset button
+      if (submitBtn) {
+        submitBtn.removeAttribute('disabled');
+        submitBtn.innerHTML = `
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+          </svg>
+          Masuk
+        `;
+      }
+    }
   });
 
   // Google Login
   const googleLogin = document.getElementById('google-login');
   googleLogin?.addEventListener('click', () => {
-    // TODO: Implement Google OAuth
-    console.log('Google login clicked');
-    // window.location.href = '/api/auth/google';
+    showToast('Login dengan Google segera hadir!', 'success');
   });
+
+  // Demo credentials hint
+  const demoHint = document.createElement('div');
+  demoHint.className = 'mt-6 p-4 bg-dark-400/50 rounded-xl border border-dark-100';
+  demoHint.innerHTML = `
+    <p class="text-secondary-400 text-sm mb-2">🔐 Demo Akun:</p>
+    <div class="space-y-1 text-xs text-secondary-500">
+      <p><strong class="text-violet-400">Admin:</strong> admin@astro.id / admin123</p>
+      <p><strong class="text-pink-400">VTuber:</strong> sakura@astro.id / vtuber123</p>
+      <p><strong class="text-blue-400">User:</strong> user@astro.id / user123</p>
+    </div>
+  `;
+  loginForm?.after(demoHint);
 </script>
+
+<style>
+  @keyframes slide-in {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  @keyframes slide-out {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+  }
+  
+  .animate-slide-in {
+    animation: slide-in 0.3s ease-out;
+  }
+  
+  .animate-slide-out {
+    animation: slide-out 0.3s ease-out;
+  }
+</style>

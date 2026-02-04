@@ -1,76 +1,36 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
 import MovieSlider from '../../components/MovieSlider.astro';
+import { getMovieDetails } from '../../lib/tmdb';
 
 const { id } = Astro.params;
 
-// Mock movie data - In production, fetch from TMDB API
-const movie = {
-  id: Number(id),
-  title: "Dune: Part Two",
-  originalTitle: "Dune: Part Two",
-  overview: "Ikuti Paul Atreides dalam perjalanan epiknya bersama Chani dan Fremen saat ia menuntut balas atas konspirasi yang menghancurkan keluarganya. Menghadapi pilihan antara cinta hidupnya dan nasib alam semesta, Paul harus mencegah masa depan yang mengerikan yang hanya dia yang bisa lihat.",
-  posterPath: "/8b8R8l88Qje9dn9OE8PY05Nxl1X.jpg",
-  backdropPath: "/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg",
-  releaseDate: "2024-02-27",
-  voteAverage: 8.4,
-  voteCount: 12500,
-  runtime: 166,
-  status: "Released",
-  tagline: "Long live the fighters.",
-  budget: 190000000,
-  revenue: 700000000,
-  genres: [
-    { id: 878, name: "Science Fiction" },
-    { id: 12, name: "Adventure" },
-    { id: 18, name: "Drama" }
-  ],
-  productionCompanies: [
-    { id: 1, name: "Legendary Pictures", logoPath: "/8M99Dkt23MjQMTTWukq4m5XsEuo.png" },
-    { id: 2, name: "Warner Bros.", logoPath: "/wdrCwmRnLFJhEoH8GSfymY85KHT.png" }
-  ],
-  credits: {
-    cast: [
-      { id: 1, name: "Timothée Chalamet", character: "Paul Atreides", profilePath: "/BE2sdjpgsa2rNTFa66f7upkaOP.jpg", order: 0 },
-      { id: 2, name: "Zendaya", character: "Chani", profilePath: "/tylFh6gmVIqjaFFMdOVavEPAHj9.jpg", order: 1 },
-      { id: 3, name: "Rebecca Ferguson", character: "Lady Jessica", profilePath: "/lJloTOheuQSirSLXNA3JHsrMNfH.jpg", order: 2 },
-      { id: 4, name: "Josh Brolin", character: "Gurney Halleck", profilePath: "/sX2aySeDvZQWKQ3ld4sW1vQffR.jpg", order: 3 },
-      { id: 5, name: "Austin Butler", character: "Feyd-Rautha", profilePath: "/9gBGvKDNfvQB3i6cL7zEJG4qjkh.jpg", order: 4 },
-      { id: 6, name: "Florence Pugh", character: "Princess Irulan", profilePath: "/gXaZQ4PMJXZaAMCGFYF4C7HSYo2.jpg", order: 5 },
-      { id: 7, name: "Dave Bautista", character: "Beast Rabban", profilePath: "/mYhS3PUPXASwlNzN7ROLgfsCpGF.jpg", order: 6 },
-      { id: 8, name: "Christopher Walken", character: "Emperor Shaddam IV", profilePath: "/il1VhCnKmlwbhMqajKi1t96GkKV.jpg", order: 7 },
-      { id: 9, name: "Léa Seydoux", character: "Lady Margot", profilePath: "/l9hbL3xGPX9UuQvLF2D1DyLOvgE.jpg", order: 8 },
-      { id: 10, name: "Javier Bardem", character: "Stilgar", profilePath: "/IShnFg6ijCJPHzxU0HddPAaUhc.jpg", order: 9 }
-    ],
-    crew: [
-      { id: 1, name: "Denis Villeneuve", job: "Director", department: "Directing", profilePath: "/zdDx9Xs93UIrJFWYApYR28J8M6b.jpg" },
-      { id: 2, name: "Hans Zimmer", job: "Original Music Composer", department: "Sound", profilePath: "/tpQnDeHY15szIXvpnhlprufz4d.jpg" }
-    ]
-  },
-  videos: {
-    results: [
-      { id: "1", key: "Way9Dexny3w", name: "Official Trailer", site: "YouTube", type: "Trailer", official: true },
-      { id: "2", key: "U2Qp5pL3ovA", name: "Final Trailer", site: "YouTube", type: "Trailer", official: true }
-    ]
-  }
-};
+// Fetch real movie data from TMDB API
+let movie: any = null;
+let similarMovies: any[] = [];
 
-const similarMovies = [
-  { id: 201, title: "Dune", posterPath: "/d5NXSklXo0qyIYkgV94XAgMIckC.jpg", releaseDate: "2021-09-15", voteAverage: 7.8, genreIds: [878, 12] },
-  { id: 202, title: "Blade Runner 2049", posterPath: "/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg", releaseDate: "2017-10-04", voteAverage: 7.6, genreIds: [878, 18] },
-  { id: 203, title: "Interstellar", posterPath: "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg", releaseDate: "2014-11-05", voteAverage: 8.4, genreIds: [12, 18, 878] },
-  { id: 204, title: "Arrival", posterPath: "/x2FJsf1ElAgr63Y3PNPtJrcmpoe.jpg", releaseDate: "2016-11-10", voteAverage: 7.6, genreIds: [18, 878] },
-  { id: 205, title: "The Martian", posterPath: "/5BHuvQ6p9kfc091Z8RiFNhCwL4b.jpg", releaseDate: "2015-09-30", voteAverage: 8.0, genreIds: [18, 12, 878] },
-  { id: 206, title: "Avatar", posterPath: "/kyeqWdyUXW608AAAATVpHaLuqeN.jpg", releaseDate: "2009-12-15", voteAverage: 7.6, genreIds: [28, 12, 14, 878] }
-];
+try {
+  movie = await getMovieDetails(Number(id));
+  similarMovies = movie.similar?.results?.slice(0, 8) || [];
+} catch (error) {
+  console.error('Error fetching movie details:', error);
+  // Redirect to 404 if movie not found
+  return Astro.redirect('/404');
+}
 
+// Handle if movie not found
+if (!movie) {
+  return Astro.redirect('/404');
+}
+
+// Sample reviews (in production, fetch from database)
 const reviews = [
   {
     id: "1",
     user: { displayName: "FilmFanatic", avatar: null },
     rating: 9,
     title: "Masterpiece visual yang memukau!",
-    content: "Denis Villeneuve berhasil menciptakan sekuel yang bahkan lebih baik dari film pertama. Visual yang memukau, akting yang luar biasa, dan musik Hans Zimmer yang menggetarkan jiwa.",
+    content: "Film yang luar biasa! Visual yang memukau, akting yang luar biasa, dan musik yang menggetarkan jiwa.",
     likes: 234,
     createdAt: "2024-03-01"
   },
@@ -79,26 +39,19 @@ const reviews = [
     user: { displayName: "CinemaLover", avatar: null },
     rating: 8,
     title: "Epic dan Emosional",
-    content: "Film ini berhasil membawa emosi yang mendalam. Chemistry antara Timothée dan Zendaya sangat terasa natural. Wajib tonton di bioskop!",
+    content: "Film ini berhasil membawa emosi yang mendalam. Wajib tonton di bioskop!",
     likes: 156,
     createdAt: "2024-03-02"
-  },
-  {
-    id: "3",
-    user: { displayName: "SciFiGeek", avatar: null },
-    rating: 10,
-    title: "Film Sci-Fi terbaik dekade ini",
-    content: "Tidak ada kata yang cukup untuk mendeskripsikan betapa spektakulernya film ini. Setiap frame adalah karya seni. Hans Zimmer sekali lagi membuktikan dia adalah maestro soundtrack.",
-    likes: 189,
-    createdAt: "2024-03-03"
   }
 ];
 
 const formatCurrency = (num: number) => {
+  if (!num) return '-';
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num);
 };
 
 const formatRuntime = (minutes: number) => {
+  if (!minutes) return '-';
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
   return `${hours}j ${mins}m`;

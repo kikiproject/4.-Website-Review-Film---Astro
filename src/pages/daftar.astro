@@ -282,6 +282,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     eyeClosed?.classList.toggle('hidden');
   });
 
+  // Show toast message
+  function showToast(message: string, type: 'success' | 'error' = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-4 right-4 px-6 py-4 rounded-xl shadow-xl z-50 flex items-center gap-3 animate-slide-in ${
+      type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+    }`;
+    toast.innerHTML = `
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        ${type === 'success' 
+          ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>'
+          : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>'
+        }
+      </svg>
+      <span>${message}</span>
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.classList.add('animate-slide-out');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
   // Password strength checker
   const strengthBars = document.querySelectorAll('.password-strength-bar');
   const strengthText = document.getElementById('password-strength-text');
@@ -318,26 +341,100 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   // Form submission
   const registerForm = document.getElementById('register-form');
+  const submitBtn = registerForm?.querySelector('button[type="submit"]');
+  
   registerForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const formData = new FormData(e.target as HTMLFormElement);
+    const displayName = formData.get('displayName');
+    const username = formData.get('username');
+    const email = formData.get('email');
     const password = formData.get('password');
     const confirmPassword = formData.get('confirmPassword');
     
     if (password !== confirmPassword) {
-      alert('Password tidak cocok!');
+      showToast('Password tidak cocok!', 'error');
       return;
     }
     
-    // TODO: Implement actual registration
-    console.log('Register attempt:', Object.fromEntries(formData));
+    // Disable button and show loading
+    if (submitBtn) {
+      submitBtn.setAttribute('disabled', 'true');
+      submitBtn.innerHTML = `
+        <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+        </svg>
+        Memproses...
+      `;
+    }
+    
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ displayName, username, email, password })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        showToast('Registrasi berhasil! Silakan login.', 'success');
+        setTimeout(() => {
+          window.location.href = '/masuk';
+        }, 2000);
+      } else {
+        showToast(data.error || 'Registrasi gagal', 'error');
+        // Reset button
+        if (submitBtn) {
+          submitBtn.removeAttribute('disabled');
+          submitBtn.innerHTML = `
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+            </svg>
+            Daftar Sekarang
+          `;
+        }
+      }
+    } catch (error) {
+      showToast('Terjadi kesalahan. Silakan coba lagi.', 'error');
+      // Reset button
+      if (submitBtn) {
+        submitBtn.removeAttribute('disabled');
+        submitBtn.innerHTML = `
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+          </svg>
+          Daftar Sekarang
+        `;
+      }
+    }
   });
 
   // Google Register
   const googleRegister = document.getElementById('google-register');
   googleRegister?.addEventListener('click', () => {
-    console.log('Google register clicked');
-    // window.location.href = '/api/auth/google';
+    showToast('Daftar dengan Google segera hadir!', 'success');
   });
 </script>
+
+<style>
+  @keyframes slide-in {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  @keyframes slide-out {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+  }
+  
+  .animate-slide-in {
+    animation: slide-in 0.3s ease-out;
+  }
+  
+  .animate-slide-out {
+    animation: slide-out 0.3s ease-out;
+  }
+</style>
