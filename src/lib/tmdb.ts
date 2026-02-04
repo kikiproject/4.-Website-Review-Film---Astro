@@ -1,7 +1,7 @@
-import axios from 'axios';
 import type { Movie, MovieListResponse, Genre, Credits, VideoResult, SearchFilters } from '../types';
 
-const TMDB_API_KEY = import.meta.env.TMDB_API_KEY || 'YOUR_API_KEY';
+// @ts-ignore - Astro environment
+const TMDB_API_KEY = (import.meta as any).env?.TMDB_API_KEY || 'YOUR_API_KEY';
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 export const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p';
 
@@ -27,14 +27,19 @@ export const IMAGE_SIZES = {
   },
 };
 
-// Create axios instance
-const tmdbApi = axios.create({
-  baseURL: TMDB_BASE_URL,
-  params: {
+// Fetch helper function
+async function tmdbFetch<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
+  const searchParams = new URLSearchParams({
     api_key: TMDB_API_KEY,
-    language: 'id-ID', // Indonesian language
-  },
-});
+    language: 'id-ID',
+    ...params
+  });
+  const response = await fetch(`${TMDB_BASE_URL}${endpoint}?${searchParams}`);
+  if (!response.ok) {
+    throw new Error(`TMDB API error: ${response.status}`);
+  }
+  return response.json();
+}
 
 // Helper function to get image URL
 export function getImageUrl(
@@ -102,65 +107,53 @@ export async function getTrendingMovies(
   timeWindow: 'day' | 'week' = 'week',
   page: number = 1
 ): Promise<MovieListResponse> {
-  const response = await tmdbApi.get(`/trending/movie/${timeWindow}`, {
-    params: { page },
-  });
-  return transformMovieList(response.data);
+  const response = await tmdbFetch<any>(`/trending/movie/${timeWindow}`, { page: String(page) });
+  return transformMovieList(response);
 }
 
 // Get popular movies
 export async function getPopularMovies(page: number = 1): Promise<MovieListResponse> {
-  const response = await tmdbApi.get('/movie/popular', {
-    params: { page },
-  });
-  return transformMovieList(response.data);
+  const response = await tmdbFetch<any>('/movie/popular', { page: String(page) });
+  return transformMovieList(response);
 }
 
 // Get top rated movies
 export async function getTopRatedMovies(page: number = 1): Promise<MovieListResponse> {
-  const response = await tmdbApi.get('/movie/top_rated', {
-    params: { page },
-  });
-  return transformMovieList(response.data);
+  const response = await tmdbFetch<any>('/movie/top_rated', { page: String(page) });
+  return transformMovieList(response);
 }
 
 // Get now playing movies (Sedang Tayang)
 export async function getNowPlayingMovies(page: number = 1): Promise<MovieListResponse> {
-  const response = await tmdbApi.get('/movie/now_playing', {
-    params: { page },
-  });
-  return transformMovieList(response.data);
+  const response = await tmdbFetch<any>('/movie/now_playing', { page: String(page) });
+  return transformMovieList(response);
 }
 
 // Get upcoming movies
 export async function getUpcomingMovies(page: number = 1): Promise<MovieListResponse> {
-  const response = await tmdbApi.get('/movie/upcoming', {
-    params: { page },
-  });
-  return transformMovieList(response.data);
+  const response = await tmdbFetch<any>('/movie/upcoming', { page: String(page) });
+  return transformMovieList(response);
 }
 
 // Get movie details
 export async function getMovieDetails(movieId: number): Promise<Movie> {
-  const response = await tmdbApi.get(`/movie/${movieId}`, {
-    params: {
-      append_to_response: 'credits,videos,similar,recommendations',
-    },
+  const response = await tmdbFetch<any>(`/movie/${movieId}`, {
+    append_to_response: 'credits,videos,similar,recommendations',
   });
   
-  const movie = transformMovie(response.data);
+  const movie = transformMovie(response);
   
   // Add credits
-  if (response.data.credits) {
+  if (response.credits) {
     movie.credits = {
-      cast: response.data.credits.cast.map((c: any) => ({
+      cast: response.credits.cast.map((c: any) => ({
         id: c.id,
         name: c.name,
         character: c.character,
         profilePath: c.profile_path,
         order: c.order,
       })),
-      crew: response.data.credits.crew.map((c: any) => ({
+      crew: response.credits.crew.map((c: any) => ({
         id: c.id,
         name: c.name,
         job: c.job,
@@ -171,9 +164,9 @@ export async function getMovieDetails(movieId: number): Promise<Movie> {
   }
   
   // Add videos
-  if (response.data.videos) {
+  if (response.videos) {
     movie.videos = {
-      results: response.data.videos.results.map((v: any) => ({
+      results: response.videos.results.map((v: any) => ({
         id: v.id,
         key: v.key,
         name: v.name,
@@ -185,8 +178,8 @@ export async function getMovieDetails(movieId: number): Promise<Movie> {
   }
   
   // Add similar movies
-  if (response.data.similar) {
-    movie.similar = transformMovieList(response.data.similar);
+  if (response.similar) {
+    movie.similar = transformMovieList(response.similar);
   }
   
   return movie;
@@ -194,16 +187,16 @@ export async function getMovieDetails(movieId: number): Promise<Movie> {
 
 // Get movie credits
 export async function getMovieCredits(movieId: number): Promise<Credits> {
-  const response = await tmdbApi.get(`/movie/${movieId}/credits`);
+  const response = await tmdbFetch<any>(`/movie/${movieId}/credits`);
   return {
-    cast: response.data.cast.map((c: any) => ({
+    cast: response.cast.map((c: any) => ({
       id: c.id,
       name: c.name,
       character: c.character,
       profilePath: c.profile_path,
       order: c.order,
     })),
-    crew: response.data.crew.map((c: any) => ({
+    crew: response.crew.map((c: any) => ({
       id: c.id,
       name: c.name,
       job: c.job,
@@ -215,9 +208,9 @@ export async function getMovieCredits(movieId: number): Promise<Credits> {
 
 // Get movie videos (trailers)
 export async function getMovieVideos(movieId: number): Promise<VideoResult> {
-  const response = await tmdbApi.get(`/movie/${movieId}/videos`);
+  const response = await tmdbFetch<any>(`/movie/${movieId}/videos`);
   return {
-    results: response.data.results.map((v: any) => ({
+    results: response.results.map((v: any) => ({
       id: v.id,
       key: v.key,
       name: v.name,
@@ -230,138 +223,114 @@ export async function getMovieVideos(movieId: number): Promise<VideoResult> {
 
 // Get similar movies
 export async function getSimilarMovies(movieId: number, page: number = 1): Promise<MovieListResponse> {
-  const response = await tmdbApi.get(`/movie/${movieId}/similar`, {
-    params: { page },
-  });
-  return transformMovieList(response.data);
+  const response = await tmdbFetch<any>(`/movie/${movieId}/similar`, { page: String(page) });
+  return transformMovieList(response);
 }
 
 // Get recommended movies
 export async function getRecommendedMovies(movieId: number, page: number = 1): Promise<MovieListResponse> {
-  const response = await tmdbApi.get(`/movie/${movieId}/recommendations`, {
-    params: { page },
-  });
-  return transformMovieList(response.data);
+  const response = await tmdbFetch<any>(`/movie/${movieId}/recommendations`, { page: String(page) });
+  return transformMovieList(response);
 }
 
 // ========== TV/SERIES ENDPOINTS ==========
 
 // Get popular TV series
 export async function getPopularTVSeries(page: number = 1): Promise<MovieListResponse> {
-  const response = await tmdbApi.get('/tv/popular', {
-    params: { page },
-  });
-  return transformMovieList(response.data);
+  const response = await tmdbFetch<any>('/tv/popular', { page: String(page) });
+  return transformMovieList(response);
 }
 
 // Get top rated TV series
 export async function getTopRatedTVSeries(page: number = 1): Promise<MovieListResponse> {
-  const response = await tmdbApi.get('/tv/top_rated', {
-    params: { page },
-  });
-  return transformMovieList(response.data);
+  const response = await tmdbFetch<any>('/tv/top_rated', { page: String(page) });
+  return transformMovieList(response);
 }
 
 // Get TV series on the air
 export async function getOnTheAirTVSeries(page: number = 1): Promise<MovieListResponse> {
-  const response = await tmdbApi.get('/tv/on_the_air', {
-    params: { page },
-  });
-  return transformMovieList(response.data);
+  const response = await tmdbFetch<any>('/tv/on_the_air', { page: String(page) });
+  return transformMovieList(response);
 }
 
 // Get TV series details
 export async function getTVSeriesDetails(seriesId: number): Promise<Movie> {
-  const response = await tmdbApi.get(`/tv/${seriesId}`, {
-    params: {
-      append_to_response: 'credits,videos,similar',
-    },
+  const response = await tmdbFetch<any>(`/tv/${seriesId}`, {
+    append_to_response: 'credits,videos,similar',
   });
-  return transformMovie(response.data);
+  return transformMovie(response);
 }
 
 // ========== ANIME ENDPOINTS ==========
 
 // Get anime (using animation genre filter with Japanese origin)
 export async function getAnimeMovies(page: number = 1): Promise<MovieListResponse> {
-  const response = await tmdbApi.get('/discover/movie', {
-    params: {
-      page,
-      with_genres: 16, // Animation genre
-      with_original_language: 'ja', // Japanese
-      sort_by: 'popularity.desc',
-    },
+  const response = await tmdbFetch<any>('/discover/movie', {
+    page: String(page),
+    with_genres: '16', // Animation genre
+    with_original_language: 'ja', // Japanese
+    sort_by: 'popularity.desc',
   });
-  return transformMovieList(response.data);
+  return transformMovieList(response);
 }
 
 export async function getAnimeSeries(page: number = 1): Promise<MovieListResponse> {
-  const response = await tmdbApi.get('/discover/tv', {
-    params: {
-      page,
-      with_genres: 16, // Animation genre
-      with_original_language: 'ja', // Japanese
-      sort_by: 'popularity.desc',
-    },
+  const response = await tmdbFetch<any>('/discover/tv', {
+    page: String(page),
+    with_genres: '16', // Animation genre
+    with_original_language: 'ja', // Japanese
+    sort_by: 'popularity.desc',
   });
-  return transformMovieList(response.data);
+  return transformMovieList(response);
 }
 
 // ========== GENRE ENDPOINTS ==========
 
 // Get all movie genres
 export async function getMovieGenres(): Promise<Genre[]> {
-  const response = await tmdbApi.get('/genre/movie/list');
-  return response.data.genres;
+  const response = await tmdbFetch<any>('/genre/movie/list');
+  return response.genres;
 }
 
 // Get all TV genres
 export async function getTVGenres(): Promise<Genre[]> {
-  const response = await tmdbApi.get('/genre/tv/list');
-  return response.data.genres;
+  const response = await tmdbFetch<any>('/genre/tv/list');
+  return response.genres;
 }
 
 // Get movies by genre
 export async function getMoviesByGenre(genreId: number, page: number = 1): Promise<MovieListResponse> {
-  const response = await tmdbApi.get('/discover/movie', {
-    params: {
-      page,
-      with_genres: genreId,
-      sort_by: 'popularity.desc',
-    },
+  const response = await tmdbFetch<any>('/discover/movie', {
+    page: String(page),
+    with_genres: String(genreId),
+    sort_by: 'popularity.desc',
   });
-  return transformMovieList(response.data);
+  return transformMovieList(response);
 }
 
 // ========== SEARCH ENDPOINTS ==========
 
 // Search movies
 export async function searchMovies(query: string, page: number = 1): Promise<MovieListResponse> {
-  const response = await tmdbApi.get('/search/movie', {
-    params: { query, page },
-  });
-  return transformMovieList(response.data);
+  const response = await tmdbFetch<any>('/search/movie', { query, page: String(page) });
+  return transformMovieList(response);
 }
 
 // Search TV series
 export async function searchTVSeries(query: string, page: number = 1): Promise<MovieListResponse> {
-  const response = await tmdbApi.get('/search/tv', {
-    params: { query, page },
-  });
-  return transformMovieList(response.data);
+  const response = await tmdbFetch<any>('/search/tv', { query, page: String(page) });
+  return transformMovieList(response);
 }
 
 // Multi search (movies, TV, people)
 export async function multiSearch(query: string, page: number = 1): Promise<any> {
-  const response = await tmdbApi.get('/search/multi', {
-    params: { query, page },
-  });
-  return response.data;
+  const response = await tmdbFetch<any>('/search/multi', { query, page: String(page) });
+  return response;
 }
 
 // Advanced search with filters
 export async function advancedSearch(filters: SearchFilters, page: number = 1): Promise<MovieListResponse> {
-  const params: any = { page };
+  const params: Record<string, string> = { page: String(page) };
   
   if (filters.query) {
     // Use search endpoint for query
@@ -374,7 +343,7 @@ export async function advancedSearch(filters: SearchFilters, page: number = 1): 
   }
   
   if (filters.year) {
-    params.primary_release_year = filters.year;
+    params.primary_release_year = String(filters.year);
   }
   
   if (filters.yearRange) {
@@ -383,8 +352,8 @@ export async function advancedSearch(filters: SearchFilters, page: number = 1): 
   }
   
   if (filters.rating) {
-    params['vote_average.gte'] = filters.rating.min;
-    params['vote_average.lte'] = filters.rating.max;
+    params['vote_average.gte'] = String(filters.rating.min);
+    params['vote_average.lte'] = String(filters.rating.max);
   }
   
   if (filters.sortBy) {
@@ -393,28 +362,24 @@ export async function advancedSearch(filters: SearchFilters, page: number = 1): 
   }
   
   const endpoint = filters.type === 'tv' ? '/discover/tv' : '/discover/movie';
-  const response = await tmdbApi.get(endpoint, { params });
-  return transformMovieList(response.data);
+  const response = await tmdbFetch<any>(endpoint, params);
+  return transformMovieList(response);
 }
 
 // ========== PERSON ENDPOINTS ==========
 
 // Get person details
 export async function getPersonDetails(personId: number): Promise<any> {
-  const response = await tmdbApi.get(`/person/${personId}`, {
-    params: {
-      append_to_response: 'movie_credits,tv_credits',
-    },
+  const response = await tmdbFetch<any>(`/person/${personId}`, {
+    append_to_response: 'movie_credits,tv_credits',
   });
-  return response.data;
+  return response;
 }
 
 // Search people
 export async function searchPeople(query: string, page: number = 1): Promise<any> {
-  const response = await tmdbApi.get('/search/person', {
-    params: { query, page },
-  });
-  return response.data;
+  const response = await tmdbFetch<any>('/search/person', { query, page: String(page) });
+  return response;
 }
 
 export default {

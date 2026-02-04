@@ -5,6 +5,8 @@ import {
   Flag, Trash2, Copy, Reply, Heart, Star, Pin, Search, Filter
 } from 'lucide-react';
 
+type MessageType = 'text' | 'image' | 'system' | 'poll' | 'report';
+
 interface Message {
   id: string;
   userId: string;
@@ -12,7 +14,7 @@ interface Message {
   userAvatar: string;
   content: string;
   timestamp: Date;
-  type: 'text' | 'image' | 'system' | 'poll' | 'report';
+  type: MessageType;
   reactions?: { emoji: string; count: number; users: string[] }[];
   replyTo?: { id: string; userName: string; content: string };
   isPinned?: boolean;
@@ -313,7 +315,7 @@ export default function LiveChat({ roomId, roomName, movieTitle, isWatchParty = 
                   )}
                   
                   {/* Message Actions */}
-                  {message.userId !== 'me' && message.type !== 'system' && (
+                  {message.userId !== 'me' && (message.type as MessageType) !== 'system' && (
                     <div className="flex gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button 
                         onClick={() => setReplyingTo(message)}

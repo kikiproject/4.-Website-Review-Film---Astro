@@ -34,7 +34,7 @@ export default function WatchParty({ movieId, movieTitle, moviePoster, hostName 
 
   // Simulate video playback
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval> | undefined;
     if (isPlaying) {
       interval = setInterval(() => {
         setCurrentTime(prev => {
